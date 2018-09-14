@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using JG.Stats.Comparision.Anarchy;
 using Newtonsoft.Json;
 
 namespace Just.Anarchy.Actions
