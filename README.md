@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/ConfusionOfSDETs/Just.Anarchy/_apis/build/status/ConfusionOfSdets.Just.Anarchy)](https://dev.azure.com/ConfusionOfSDETs/Just.Anarchy/_build/latest?definitionId=2)
+
 # Just.Anarchy
 Asp.net core chaos monkey library
 
