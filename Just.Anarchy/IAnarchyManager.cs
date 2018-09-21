@@ -7,9 +7,10 @@ namespace Just.Anarchy
         AnarchyState GetState();
         void EnableAnarchy();
         void DisableAnarchy();
-        ICauseAnarchy ChooseRandomAnarchyAction();
+        IAnarchyActionFactory ChooseRandomAnarchyActionFactory();
         void EnableSpecificType(string anarchytype);
-        List<ICauseAnarchy> GetAllActiveActions();
-        List<ICauseAnarchy> GetAllInactiveActions();
+        void SetRequestPatternForType(string anarchytype, string requestPattern);
+        List<IAnarchyActionFactory> GetAllActiveActionFactories();
+        List<IAnarchyActionFactory> GetAllInactiveActionFactories();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Just.Anarchy.Controllers
 {
@@ -17,8 +18,8 @@ namespace Just.Anarchy.Controllers
             return new
             {
                 State=_anarchyManager.GetState().ToString(), 
-                ActiveActions=_anarchyManager.GetAllActiveActions(),
-                InActiveActions=_anarchyManager.GetAllInactiveActions()
+                ActiveActions=_anarchyManager.GetAllActiveActionFactories().Select(f => f.AnarchyAction),
+                InActiveActions=_anarchyManager.GetAllInactiveActionFactories().Select(f => f.AnarchyAction)
             };
         }
 
@@ -35,9 +36,13 @@ namespace Just.Anarchy.Controllers
         }
 
         [Route("status/anarchy/enable/{anarchytype}")]
-        public void EnableIndividual([FromRoute] string anarchytype)
+        public void EnableIndividual([FromRoute] string anarchytype, string requestPattern = null)
         {
             _anarchyManager.EnableSpecificType(anarchytype);
+            if (requestPattern != null)
+            {
+                _anarchyManager.SetRequestPatternForType(anarchytype, requestPattern);
+            }
         }
     }
 }

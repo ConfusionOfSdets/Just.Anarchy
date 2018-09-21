@@ -18,16 +18,16 @@ namespace Just.Anarchy
         {
             if(_chaosManager.GetState() == AnarchyState.Active && !context.Request.Path.Value.Contains("status/anarchy"))
             {
-                var action = _chaosManager.ChooseRandomAnarchyAction();
-                await action.ExecuteAsync();
-                if (action.AnarchyType == CauseAnarchyType.Passive)
+                var action = _chaosManager.ChooseRandomAnarchyActionFactory();
+                action.HandleRequest(context.Request.Path);
+                if (action.AnarchyAction.AnarchyType == CauseAnarchyType.Passive)
                 {   
                     await _next(context);
                 }
                 else
                 {
-                    context.Response.StatusCode = action.StatusCode;
-                    await context.Response.WriteAsync(action.Body);
+                    context.Response.StatusCode = action.AnarchyAction.StatusCode;
+                    await context.Response.WriteAsync(action.AnarchyAction.Body);
                 }
             }
             else

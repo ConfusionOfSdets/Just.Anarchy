@@ -6,11 +6,11 @@ namespace Just.Anarchy
 {
     public class AnarchyManager : IAnarchyManager
     {
-        private readonly IList<ICauseAnarchy> _anarchyActions;
+        private readonly IList<IAnarchyActionFactory> _actionFactories;
 
-        public AnarchyManager(IEnumerable<ICauseAnarchy> chaosActions)
+        public AnarchyManager(IEnumerable<IAnarchyActionFactory> actionFactories)
         {
-            this._anarchyActions = chaosActions.ToList();
+            this._actionFactories = actionFactories.ToList();
         }
         private AnarchyState State { get; set; }
 
@@ -22,46 +22,62 @@ namespace Just.Anarchy
         public void EnableAnarchy()
         {
             State = AnarchyState.Active;
-            UpdateAllActions(true);
+            UpdateAllFactoryStates(true);
         }
 
         public void DisableAnarchy()
         {
             State = AnarchyState.Disabled;
-            UpdateAllActions(false);
+            UpdateAllFactoryStates(false);
         }
 
-        private void UpdateAllActions(bool active)
+        private void UpdateAllFactoryStates(bool active)
         {
-            foreach (var anarchyAction in _anarchyActions)
+            foreach (var actionFactory in _actionFactories)
             {
-                anarchyAction.Active = active;
+                if (active)
+                {
+                    actionFactory.Start();
+                }
+                else
+                {
+                    actionFactory.Stop();
+                }
             }
         }
 
-        public ICauseAnarchy ChooseRandomAnarchyAction()
+        public IAnarchyActionFactory ChooseRandomAnarchyActionFactory()
         {
             var random = new Random();
-            var activeActions = _anarchyActions.Where(x => x.Active).ToList();
+            var activeActions = _actionFactories.Where(x => x.IsActive).ToList();
             return activeActions[random.Next(0, activeActions.Count)];
         }
 
         public void EnableSpecificType(string anarchyType)
         {
-            var action = _anarchyActions.FirstOrDefault(x => x.GetType().Name.Contains(anarchyType));
-            if (action == null) return;
-            action.Active = true;
+            var actionFactory = GetActionFactoryCalled(anarchyType);
+            if (actionFactory == null) return;
+            actionFactory.Start();
             State = AnarchyState.Active;
         }
 
-        public List<ICauseAnarchy> GetAllActiveActions()
+        public void SetRequestPatternForType(string anarchyType, string requestPattern)
         {
-            return _anarchyActions.Where(x => x.Active).ToList();
+            var actionFactory = GetActionFactoryCalled(anarchyType);
+            actionFactory?.ForTargetPattern(requestPattern);
         }
 
-        public List<ICauseAnarchy> GetAllInactiveActions()
+        public List<IAnarchyActionFactory> GetAllActiveActionFactories()
         {
-            return _anarchyActions.Where(x => !x.Active).ToList();
+            return _actionFactories.Where(x => x.IsActive).ToList();
         }
+
+        public List<IAnarchyActionFactory> GetAllInactiveActionFactories()
+        {
+            return _actionFactories.Where(x => !x.IsActive).ToList();
+        }
+
+        private IAnarchyActionFactory GetActionFactoryCalled(string anarchyType) =>
+            _actionFactories.FirstOrDefault(x => x.AnarchyAction.GetType().Name.Contains(anarchyType));
     }
 }
