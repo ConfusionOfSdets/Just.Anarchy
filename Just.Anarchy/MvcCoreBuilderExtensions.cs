@@ -14,10 +14,11 @@ namespace Just.Anarchy
 
             builder.AddApplicationPart(typeof(MvcCoreBuilderExtensions).Assembly);
             builder.Services.AddSingleton<IAnarchyManager, AnarchyManager>();
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new DelayAnarchy()));
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new CpuAnarchy()));
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new MemoryAnarchy()));
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new RandomErrorResponseAnarchy()));
+            builder.Services.AddSingleton<IHandleTime, Timer>();
+            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new DelayAnarchy(), c.GetService<IHandleTime>()));
+            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new CpuAnarchy(), c.GetService<IHandleTime>()));
+            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new MemoryAnarchy(), c.GetService<IHandleTime>()));
+            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new RandomErrorResponseAnarchy(), c.GetService<IHandleTime>()));
             return builder;
         }
 
