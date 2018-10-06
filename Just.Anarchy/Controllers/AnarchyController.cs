@@ -36,7 +36,7 @@ namespace Just.Anarchy.Controllers
         }
 
         [Route("status/anarchy/enable/{anarchytype}")]
-        public void EnableIndividual([FromRoute] string anarchytype, string requestPattern = null)
+        public void EnableIndividualAnarchy([FromRoute] string anarchytype, string requestPattern = null)
         {
             _anarchyManager.EnableSpecificType(anarchytype);
             if (requestPattern != null)
