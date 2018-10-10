@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Just.Anarchy.Actions
@@ -11,12 +12,11 @@ namespace Just.Anarchy.Actions
         public int StatusCode => 0;
 
         public string Body => "";
-
-        public async Task ExecuteAsync()
+        public Task ExecuteAsync(TimeSpan? duration, CancellationToken cancellationToken)
         {
-            Random random = new Random();
+            var random = new Random();
             var randomSecs = random.Next(1, 60);
-            await Task.Delay(TimeSpan.FromSeconds(randomSecs));
+            return Task.Delay(TimeSpan.FromSeconds(randomSecs), cancellationToken);
         }
     }
 }
