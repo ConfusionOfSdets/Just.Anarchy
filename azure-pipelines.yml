@@ -19,7 +19,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: test
-    projects: '**/*Tests/*.csproj'
+    projects: '**/Just.Anarchy.Test.*/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
 - task: PublishTestResults@2
