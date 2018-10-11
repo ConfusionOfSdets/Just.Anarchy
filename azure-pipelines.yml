@@ -12,15 +12,16 @@ steps:
 - script: |
     dotnet build --configuration $(buildConfiguration)
     #dotnet test dotnetcore-tests --configuration $(buildConfiguration) --logger trx
+    find -wholename **/Just.Anarchy.Test*/*.csproj -print | xargs -i dotnet test {} --configuration $(buildConfiguration) --logger trx
     dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
   env:
     pswd: $(dockerPassword)
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: test
-    projects: '**/Just.Anarchy.Test.*/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+# - task: DotNetCoreCLI@2
+#   inputs:
+#     command: test
+#     projects: '**/Just.Anarchy.Test.*/*.csproj'
+#     arguments: '--configuration $(buildConfiguration)'
 
 - task: PublishTestResults@2
   inputs:
