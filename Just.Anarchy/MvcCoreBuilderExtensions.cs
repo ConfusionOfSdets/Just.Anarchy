@@ -1,5 +1,7 @@
 ﻿using System;
 using Just.Anarchy.Actions;
+using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Exceptions.Handlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,6 +17,9 @@ namespace Just.Anarchy
             builder.AddApplicationPart(typeof(MvcCoreBuilderExtensions).Assembly);
             builder.Services.AddSingleton<IAnarchyManager, AnarchyManager>();
             builder.Services.AddSingleton<IHandleTime, Timer>();
+            builder.Services.AddSingleton<IHandleAnarchyExceptions, ExceptionHandlerManager>();
+            builder.Services.AddSingleton<IExceptionHandler, ScheduleRunningExceptionHandler>();
+            builder.Services.AddSingleton<IExceptionHandler, UnschedulableActionExceptionHandler>();
             builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new DelayAnarchy(), c.GetService<IHandleTime>()));
             builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new CpuAnarchy(), c.GetService<IHandleTime>()));
             builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new MemoryAnarchy(), c.GetService<IHandleTime>()));
