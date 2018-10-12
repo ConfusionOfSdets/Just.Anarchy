@@ -2,7 +2,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Just.Anarchy.Test.Unit
+namespace Just.Anarchy.Test.Unit.Core
 {
     [TestFixture]
     public class ScheduleTests
