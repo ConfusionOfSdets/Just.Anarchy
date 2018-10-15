@@ -20,11 +20,31 @@ namespace Just.Anarchy
 
         public async Task Invoke(HttpContext context)
         {
+            var path = context.Request.Path.Value;
+            if (path.Contains("/anarchy/schedule/"))
+            {
+                try
+                {
+                    await _next(context);
+                }
+                catch (Exception e)
+                {
+                    await _exceptionHandler.HandleAsync(context.Response, e);
+                }
+            }
+
             if(_chaosManager.GetState() == AnarchyState.Active && !context.Request.Path.Value.Contains("status/anarchy"))
             {
                 var action = _chaosManager.ChooseRandomAnarchyActionFactory();
 
-                await HandleRequestSafely(action, context);
+                try
+                {
+                    action.HandleRequest(context.Request.Path);
+                }
+                catch (Exception e)
+                {
+                    await _exceptionHandler.HandleAsync(context.Response, e);
+                }
 
                 if (action.AnarchyAction.AnarchyType == CauseAnarchyType.Passive)
                 {   
@@ -39,18 +59,6 @@ namespace Just.Anarchy
             else
             {
                 await _next(context);
-            }
-        }
-
-        private async Task HandleRequestSafely(IAnarchyActionFactory actionFactory, HttpContext context)
-        {
-            try
-            {
-                actionFactory.HandleRequest(context.Request.Path);
-            }
-            catch (Exception e)
-            {
-                await _exceptionHandler.HandleAsync(context.Response, e);
             }
         }
     }

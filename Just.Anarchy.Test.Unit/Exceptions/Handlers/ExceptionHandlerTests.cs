@@ -12,14 +12,18 @@ using NUnit.Framework;
 namespace Just.Anarchy.Test.Unit.Exceptions.Handlers
 {
     [TestFixture]
-    public class BaseExceptionHandlerTests
+    public class ExceptionHandlerTests
     {
         private static readonly object[] CanHandleCases =
         {
+            new object[] { new ScheduleExistsExceptionHandler(), new ScheduleExistsException(), true },
+            new object[] { new ScheduleExistsExceptionHandler(), new ArgumentException(), false },
             new object[] { new ScheduleRunningExceptionHandler(), new ScheduleRunningException(), true },
             new object[] { new ScheduleRunningExceptionHandler(), new ArgumentException(), false },
             new object[] { new UnschedulableActionExceptionHandler(), new UnschedulableActionException(), true },
-            new object[] { new UnschedulableActionExceptionHandler(), new ArgumentException(), false }
+            new object[] { new UnschedulableActionExceptionHandler(), new ArgumentException(), false },
+            new object[] { new AnarchyActionNotFoundExceptionHandler(), new AnarchyActionNotFoundException(), true },
+            new object[] { new AnarchyActionNotFoundExceptionHandler(), new NullReferenceException(), false }
         };
 
         [TestCaseSource(nameof(CanHandleCases))]
@@ -35,7 +39,8 @@ namespace Just.Anarchy.Test.Unit.Exceptions.Handlers
         private static readonly object[] HandleAsyncFailingCases =
         {
             new object[] { new ScheduleRunningExceptionHandler(), new ArgumentException() },
-            new object[] { new UnschedulableActionExceptionHandler(), new ArgumentException() }
+            new object[] { new UnschedulableActionExceptionHandler(), new ArgumentException() },
+            new object[] { new AnarchyActionNotFoundExceptionHandler(), new ArgumentException() }
         };
 
         [TestCaseSource(nameof(HandleAsyncFailingCases))]
@@ -53,7 +58,9 @@ namespace Just.Anarchy.Test.Unit.Exceptions.Handlers
         private static readonly object[] HandleAsyncPassingCases =
         {
             new object[] { new ScheduleRunningExceptionHandler(), new ScheduleRunningException(), "schedule-running", StatusCodes.Status400BadRequest },
-            new object[] { new UnschedulableActionExceptionHandler(), new UnschedulableActionException(), "unschedulable-action-type", StatusCodes.Status400BadRequest }
+            new object[] { new UnschedulableActionExceptionHandler(), new UnschedulableActionException(), "unschedulable-action-type", StatusCodes.Status400BadRequest },
+            new object[] { new AnarchyActionNotFoundExceptionHandler(), new AnarchyActionNotFoundException(), "anarchy-action-not-found", StatusCodes.Status404NotFound }
+
         };
 
         [TestCaseSource(nameof(HandleAsyncPassingCases))]
