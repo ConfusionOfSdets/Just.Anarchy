@@ -61,9 +61,7 @@ namespace Just.Anarchy.Test.Unit.Actions
         }
 
         [Test]
-        [TestCase("/bob", true)]
-        [TestCase("/jim", false)]
-        public void HandleRequestRejectsIfTargetPatternDoesNotMatch(string url, bool expMatch)
+        public void HandleRequestRejectsIfTargetPatternDoesNotMatch()
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
@@ -72,15 +70,26 @@ namespace Just.Anarchy.Test.Unit.Actions
             sut.ForTargetPattern("/bob$");
 
             //Act
-            sut.HandleRequest(url);
+            sut.HandleRequest("/jim");
 
             //Assert
-            if (expMatch) {
-                action.Received().ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>()); ;
-            } else
-            {
-                action.DidNotReceive().ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>()); ;
-            }
+            action.DidNotReceive().ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>()); ;
+        }
+
+        [Test]
+        public void HandleRequestHandlesIfTargetPatternMatches()
+        {
+            //Arrange
+            var action = Substitute.For<ICauseAnarchy>();
+            var timer = Substitute.For<IHandleTime>();
+            var sut = new AnarchyActionFactory(action, timer);
+            sut.ForTargetPattern("/bob$");
+
+            //Act
+            sut.HandleRequest("/bob");
+
+            //Assert
+            action.Received().ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>()); ;
         }
 
         [Test]

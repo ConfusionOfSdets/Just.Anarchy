@@ -47,8 +47,9 @@ namespace Just.Anarchy.Test.Unit.Exceptions.Handlers
             result.Should().Be(exception);
         }
 
+
         [Test]
-        public void HandleAsyncThrowsExceptionIfItCannotBeHandled()
+        public void HandleAsyncChecksAllHandlersAndThrowsIfItCannotHandle()
         {
             //Arrange
             var response = new DefaultHttpContext().Response;
@@ -64,24 +65,6 @@ namespace Just.Anarchy.Test.Unit.Exceptions.Handlers
 
             //Assert
             result.Should().Be(exception);
-        }
-
-        [Test]
-        public void HandleAsyncChecksAllHandlers()
-        {
-            //Arrange
-            var response = new DefaultHttpContext().Response;
-            var handler1 = Substitute.For<IExceptionHandler>();
-            handler1.CanHandle(Arg.Any<Exception>()).Returns(false);
-            var handler2 = Substitute.For<IExceptionHandler>();
-            handler2.CanHandle(Arg.Any<Exception>()).Returns(false);
-            var exception = new ArgumentNullException();
-            var sut = new ExceptionHandlerManager(new[] { handler1, handler2 });
-
-            //Act
-            Assert.CatchAsync(async () => await sut.HandleAsync(response, exception));
-
-            //Assert
             handler1.Received(1).CanHandle(exception);
             handler2.Received(1).CanHandle(exception);
         }
