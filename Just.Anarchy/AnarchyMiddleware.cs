@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Just.Anarchy.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy
@@ -7,11 +9,13 @@ namespace Just.Anarchy
     {
         private readonly RequestDelegate _next;
         private readonly IAnarchyManager _chaosManager;
+        private readonly IHandleAnarchyExceptions _exceptionHandler;
 
-        public AnarchyMiddleware(RequestDelegate next, IAnarchyManager chaosManager)
+        public AnarchyMiddleware(RequestDelegate next, IAnarchyManager chaosManager, IHandleAnarchyExceptions exceptionHandler)
         {
             _next = next;
             _chaosManager = chaosManager;
+            _exceptionHandler = exceptionHandler;
         }
 
         public async Task Invoke(HttpContext context)
@@ -19,7 +23,9 @@ namespace Just.Anarchy
             if(_chaosManager.GetState() == AnarchyState.Active && !context.Request.Path.Value.Contains("status/anarchy"))
             {
                 var action = _chaosManager.ChooseRandomAnarchyActionFactory();
-                action.HandleRequest(context.Request.Path);
+
+                await HandleRequestSafely(action, context);
+
                 if (action.AnarchyAction.AnarchyType == CauseAnarchyType.Passive)
                 {   
                     await _next(context);
@@ -36,5 +42,16 @@ namespace Just.Anarchy
             }
         }
 
+        private async Task HandleRequestSafely(IAnarchyActionFactory actionFactory, HttpContext context)
+        {
+            try
+            {
+                actionFactory.HandleRequest(context.Request.Path);
+            }
+            catch (Exception e)
+            {
+                await _exceptionHandler.HandleAsync(context.Response, e);
+            }
+        }
     }
 }

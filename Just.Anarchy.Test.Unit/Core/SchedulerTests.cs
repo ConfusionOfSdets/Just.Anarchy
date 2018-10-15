@@ -6,7 +6,7 @@ using Just.Anarchy.Test.Unit.utils;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Just.Anarchy.Test.Unit
+namespace Just.Anarchy.Test.Unit.Core
 {
     [TestFixture]
     public class SchedulerTests
