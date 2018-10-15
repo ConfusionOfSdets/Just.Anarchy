@@ -19,11 +19,6 @@ steps:
   failOnStderr: true
 - script: dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
   displayName: Dotnet Publish
-# - task: DotNetCoreCLI@2
-#   inputs:
-#     command: test
-#     projects: '**/Just.Anarchy.Test.*/*.csproj'
-#     arguments: '--configuration $(buildConfiguration)'
 
 - task: PublishTestResults@2
   inputs:
