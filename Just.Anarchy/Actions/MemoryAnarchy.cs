@@ -10,6 +10,7 @@ namespace Just.Anarchy.Actions
     public class MemoryAnarchy : ICauseAnarchy, ICauseScheduledAnarchy
     {
         public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.Passive;
+        public string Name => nameof(MemoryAnarchy);
         public bool Active { get; set; } = false;
 
         public int StatusCode => 0;

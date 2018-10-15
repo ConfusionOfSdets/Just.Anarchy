@@ -7,6 +7,7 @@ namespace Just.Anarchy
     public interface ICauseAnarchy
     {
         CauseAnarchyType AnarchyType { get; set; }
+        string Name { get; }
         bool Active { get; set; }
         int StatusCode { get; }
         string Body { get; }

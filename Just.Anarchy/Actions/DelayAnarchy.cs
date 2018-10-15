@@ -7,6 +7,7 @@ namespace Just.Anarchy.Actions
     public class DelayAnarchy : ICauseAnarchy
     {
         public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.Passive;
+        public string Name => nameof(DelayAnarchy);
         public bool Active { get; set; } = false;
 
         public int StatusCode => 0;

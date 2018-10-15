@@ -10,6 +10,7 @@ namespace Just.Anarchy.Actions
     public class RandomErrorResponseAnarchy : ICauseAnarchy
     {
         public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.AlterResponse;
+        public string Name => nameof(RandomErrorResponseAnarchy);
         public bool Active { get; set; } = false;
 
         public int StatusCode { get; set; }
