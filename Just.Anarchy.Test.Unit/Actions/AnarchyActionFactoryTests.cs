@@ -94,8 +94,10 @@ namespace Just.Anarchy.Test.Unit.Actions
             var timer = Substitute.For<IHandleTime>();
             var sut = new AnarchyActionFactory(action, timer);
             sut.ForTargetPattern(null);
+
             //Act
             sut.HandleRequest(url);
+            
             //Assert
             action.DidNotReceive().ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>()); ;
         }
