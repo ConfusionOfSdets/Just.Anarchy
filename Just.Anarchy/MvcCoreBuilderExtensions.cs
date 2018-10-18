@@ -16,7 +16,6 @@ namespace Just.Anarchy
                 throw new ArgumentNullException(nameof(builder));
 
             builder.AddApplicationPart(typeof(MvcCoreBuilderExtensions).Assembly);
-            builder.Services.AddSingleton<IAnarchyManager, AnarchyManager>();
             builder.Services.AddSingleton<IAnarchyManagerNew, AnarchyManagerNew>();
             builder.Services.AddSingleton<IHandleTime, Timer>();
             builder.Services.AddSingleton<IHandleAnarchyExceptions, ExceptionHandlerManager>();
