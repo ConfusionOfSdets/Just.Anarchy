@@ -1,10 +1,6 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Just.Anarchy.Core;
 using Just.Anarchy.Exceptions;
-using Just.Anarchy.Test.Unit.utils;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -24,7 +20,7 @@ namespace Just.Anarchy.Test.Unit.Core
             var action = Substitute.For<ICauseAnarchy>();
             action.Name.Returns("testAnarchyType");
             factory.AnarchyAction.Returns(action);
-            var sut = new AnarchyManagerNew(new IAnarchyActionFactory[] { factory });
+            var sut = new AnarchyManagerNew(new [] { factory });
 
             //act
             sut.AssignScheduleToAnarchyActionFactory(anarchyType, schedule);
@@ -46,7 +42,7 @@ namespace Just.Anarchy.Test.Unit.Core
             var action = Substitute.For<ICauseAnarchy>();
             action.Name.Returns("testAnarchyType");
             factory.AnarchyAction.Returns(action);
-            var sut = new AnarchyManagerNew(new IAnarchyActionFactory[] { factory });
+            var sut = new AnarchyManagerNew(new [] { factory });
 
             //act
             var exception = Assert.Catch(() => sut.AssignScheduleToAnarchyActionFactory(anarchyType, schedule));
@@ -72,7 +68,7 @@ namespace Just.Anarchy.Test.Unit.Core
             secondAction.Name.Returns(secondActionName);
             factory1.AnarchyAction.Returns(firstAction);
             factory2.AnarchyAction.Returns(secondAction);
-            var sut = new AnarchyManagerNew(new IAnarchyActionFactory[] { factory1, factory2 });
+            var sut = new AnarchyManagerNew(new [] { factory1, factory2 });
 
             //act
             sut.AssignScheduleToAnarchyActionFactory("firstActionName", schedule);
@@ -91,7 +87,7 @@ namespace Just.Anarchy.Test.Unit.Core
             action.Name.Returns("testAnarchyType");
             factory.ExecutionSchedule.Returns(new Schedule());
             factory.AnarchyAction.Returns(action);
-            var sut = new AnarchyManagerNew(new IAnarchyActionFactory[] { factory });
+            var sut = new AnarchyManagerNew(new [] { factory });
 
             //act
             var exception = Assert.Catch(() => sut.AssignScheduleToAnarchyActionFactory("testAnarchyType", new Schedule()));
