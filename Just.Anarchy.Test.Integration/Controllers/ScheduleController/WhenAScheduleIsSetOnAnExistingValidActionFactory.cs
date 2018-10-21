@@ -41,9 +41,15 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
         }
 
         [Then]
-        public void ThenTheResponseHasTheCorrectStatus() => _response.StatusCode.Should().Be(StatusCodes.Status200OK);
+        public void ThenTheResponseHasTheCorrectStatus()
+        {
+            _response.StatusCode.Should().Be(StatusCodes.Status200OK);
+        }
 
         [Then]
-        public void TheActionFactoryHasAScheduleSet() => _mockFactory.Received(1).AssociateSchedule(Arg.Any<Schedule>());
+        public void TheActionFactoryHasAScheduleSet()
+        {
+            _mockFactory.Received(1).AssociateSchedule(Arg.Any<Schedule>());
+        }
     }
 }
