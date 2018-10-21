@@ -24,17 +24,5 @@ namespace Just.Anarchy.Test.Integration
             return WebHost.CreateDefaultBuilder(new string[0])
                 .UseStartup<Startup>().ConfigureServices(_customServiceConfiguration);
         }
-
-        //protected override void ConfigureWebHost(IWebHostBuilder builder)
-        //{
-        //    var mockAction = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-        //    mockAction.Name.Returns("testAction");
-
-        //    builder.ConfigureServices(services =>
-        //    {
-        //        services.AddSingleton<IAnarchyActionFactory>(s =>
-        //            new AnarchyActionFactory(mockAction, s.GetService<IHandleTime>()));
-        //    });
-        //}
     }
 }
