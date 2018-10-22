@@ -19,5 +19,18 @@ namespace Just.Anarchy.Controllers
             _anarchyManager.AssignScheduleToAnarchyActionFactory(anarchyType, schedule);
             return new OkResult();
         }
+
+        [HttpPost, Route(Routes.GetSetSchedule)]
+        public IActionResult GetSchedule(string anarchyType)
+        {
+            var schedule = _anarchyManager.GetScheduleFromAnarchyActionFactory(anarchyType);
+
+            if (schedule == null)
+            {
+                return new NotFoundResult();
+            }
+
+            return new OkObjectResult(schedule);
+        }
     }
 }
