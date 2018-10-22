@@ -16,12 +16,7 @@ namespace Just.Anarchy.Core
 
         public void AssignScheduleToAnarchyActionFactory(string anarchyType, Schedule schedule)
         {
-            var factory = _actionFactories.FirstOrDefault(f => f.AnarchyAction.Name.ToLower().Equals(anarchyType?.ToLower()));
-
-            if (factory == null)
-            {
-                throw new AnarchyActionNotFoundException(anarchyType);
-            }
+            var factory = GetFactoryContainingAction(anarchyType);
 
             if (factory.ExecutionSchedule != null)
             {
@@ -29,6 +24,23 @@ namespace Just.Anarchy.Core
             }
 
             factory.AssociateSchedule(schedule);
+        }
+
+        public Schedule GetScheduleFromAnarchyActionFactory(string anarchyType)
+        {
+            return GetFactoryContainingAction(anarchyType)?.ExecutionSchedule;
+        }
+
+        private IAnarchyActionFactory GetFactoryContainingAction(string anarchyType)
+        {
+            var factory = _actionFactories.FirstOrDefault(f => f.AnarchyAction.Name.ToLower().Equals(anarchyType?.ToLower()));
+
+            if (factory == null)
+            {
+                throw new AnarchyActionNotFoundException(anarchyType);
+            }
+
+            return factory;
         }
     }
 }
