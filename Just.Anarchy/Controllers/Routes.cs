@@ -6,6 +6,6 @@ namespace Just.Anarchy.Controllers
 {
     public static class Routes
     {
-        public const string SetSchedule = "/anarchy/schedule/{anarchyType}";
+        public const string GetSetSchedule = "/anarchy/schedule/{anarchyType}";
     }
 }

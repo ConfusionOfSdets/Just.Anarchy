@@ -13,7 +13,7 @@ namespace Just.Anarchy.Controllers
             _anarchyManager = anarchyManager;
         }
 
-        [HttpPost, Route(Routes.SetSchedule)]
+        [HttpPost, Route(Routes.GetSetSchedule)]
         public IActionResult SetSchedule(string anarchyType, [FromBody]Schedule schedule)
         {
             _anarchyManager.AssignScheduleToAnarchyActionFactory(anarchyType, schedule);

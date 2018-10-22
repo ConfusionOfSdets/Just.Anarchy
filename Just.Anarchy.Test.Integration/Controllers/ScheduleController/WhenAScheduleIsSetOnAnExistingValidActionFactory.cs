@@ -36,7 +36,7 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
         public override async Task WhenAsync()
         {
             _response = await _client.PostAsync(
-                Routes.SetSchedule.Replace("{anarchyType}", "testAction"),
+                Routes.GetSetSchedule.Replace("{anarchyType}", "testAction"),
                 new StringContent(JsonConvert.SerializeObject(new Schedule()), Encoding.UTF8, "application/json"));
         }
 
