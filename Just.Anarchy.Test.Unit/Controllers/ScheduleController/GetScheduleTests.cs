@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using NUnit.Framework;
@@ -9,7 +8,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
     [TestFixture]
     public class GetScheduleTests
     {
-        const string anarchyType = "anarchyType";
+        const string AnarchyType = "anarchyType";
 
         [Test]
         public void GetSchedule_CallsAnarchyManager_ActionFound()
@@ -21,7 +20,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
             
             //Act
-            var result = sut.GetSchedule(anarchyType);
+            var result = sut.GetSchedule(AnarchyType);
 
             //Assert
             result.Should().BeOfType<OkObjectResult>();
@@ -37,7 +36,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
 
             //Act
-            var result = sut.GetSchedule(anarchyType);
+            var result = sut.GetSchedule(AnarchyType);
 
             //Assert
             result.Should().BeOfType<NotFoundResult>();

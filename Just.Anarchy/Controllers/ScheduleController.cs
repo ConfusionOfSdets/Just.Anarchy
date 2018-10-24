@@ -20,7 +20,7 @@ namespace Just.Anarchy.Controllers
             return new OkResult();
         }
 
-        [HttpPost, Route(Routes.GetSetSchedule)]
+        [HttpGet, Route(Routes.GetSetSchedule)]
         public IActionResult GetSchedule(string anarchyType)
         {
             var schedule = _anarchyManager.GetScheduleFromAnarchyActionFactory(anarchyType);
