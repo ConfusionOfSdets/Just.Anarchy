@@ -11,12 +11,18 @@ variables:
 steps:
 - script: |
     dotnet build --configuration $(buildConfiguration)
-    dotnet test dotnetcore-tests --configuration $(buildConfiguration) --logger trx
-    dotnet publish --configuration $(buildConfiguration) --output out
+  displayName: Build
   env:
     pswd: $(dockerPassword)
+- script: find -wholename **/Just.Anarchy.Test*/*.csproj -print | xargs -i dotnet test {} --configuration $(buildConfiguration) --logger trx
+  displayName: Run Tests
+  failOnStderr: true
+- script: dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
+  displayName: Dotnet Publish
 
 - task: PublishTestResults@2
   inputs:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
+
+- task: PublishBuildArtifacts@1
