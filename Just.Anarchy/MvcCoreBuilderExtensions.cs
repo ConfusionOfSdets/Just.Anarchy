@@ -21,6 +21,7 @@ namespace Just.Anarchy
             builder.Services.AddSingleton<IHandleAnarchyExceptions, ExceptionHandlerManager>();
             builder.Services.AddSingleton<IExceptionHandler, AnarchyActionNotFoundExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, ScheduleRunningExceptionHandler>();
+            builder.Services.AddSingleton<IExceptionHandler, ScheduleExistsExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, UnschedulableActionExceptionHandler>(); 
             builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new DelayAnarchy(), c.GetService<IHandleTime>()));
             builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new CpuAnarchy(), c.GetService<IHandleTime>()));
