@@ -8,6 +8,7 @@ namespace Just.Anarchy.Actions
     public class CpuAnarchy : ICauseAnarchy, ICauseScheduledAnarchy
     {
         public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.Passive;
+        public string Name => nameof(CpuAnarchy);
         public bool Active { get; set; } = false;
 
         public int StatusCode => 0;

@@ -68,7 +68,7 @@ namespace Just.Anarchy
             IsActive = false;
         }
 
-        public void WithSchedule(Schedule schedule)
+        public void AssociateSchedule(Schedule schedule)
         {
             if (!(AnarchyAction is ICauseScheduledAnarchy))
             {

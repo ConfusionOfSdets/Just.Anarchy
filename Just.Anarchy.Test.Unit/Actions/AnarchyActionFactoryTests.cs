@@ -103,8 +103,10 @@ namespace Just.Anarchy.Test.Unit.Actions
             var timer = Substitute.For<IHandleTime>();
             var sut = new AnarchyActionFactory(action, timer);
             sut.ForTargetPattern(null);
+
             //Act
             sut.HandleRequest(url);
+            
             //Assert
             action.DidNotReceive().ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>()); ;
         }
@@ -140,7 +142,7 @@ namespace Just.Anarchy.Test.Unit.Actions
         }
 
         [Test]
-        public void WithScheduleSetsScheduleCorrectly()
+        public void AssociateScheduleSetsScheduleCorrectly()
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
@@ -149,14 +151,14 @@ namespace Just.Anarchy.Test.Unit.Actions
             var sut = new AnarchyActionFactory(action, timer);
 
             //Act
-            sut.WithSchedule(schedule);
+            sut.AssociateSchedule(schedule);
 
             //Assert
             sut.ExecutionSchedule.Should().BeSameAs(schedule);
         }
 
         [Test]
-        public void WithScheduleCannotSetScheduleWhenActive()
+        public void AssociateScheduleCannotSetScheduleWhenActive()
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
@@ -166,14 +168,14 @@ namespace Just.Anarchy.Test.Unit.Actions
             factory.Start();
 
             //Act
-            Action sutCall = () => factory.WithSchedule(schedule);
+            Action sutCall = () => factory.AssociateSchedule(schedule);
 
             //Assert
             sutCall.Should().Throw<ScheduleRunningException>();
         }
 
         [Test]
-        public void WithScheduleCannotSetScheduleForUnscheduledAction()
+        public void AssociateScheduleCannotSetScheduleForUnscheduledAction()
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
@@ -182,7 +184,7 @@ namespace Just.Anarchy.Test.Unit.Actions
             var factory = new AnarchyActionFactory(action, timer);
 
             //Act
-            Action sutCall = () => factory.WithSchedule(schedule);
+            Action sutCall = () => factory.AssociateSchedule(schedule);
 
             //Assert
             sutCall.Should().Throw<UnschedulableActionException>();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Just.Anarchy.Exceptions;
 
 namespace Just.Anarchy
 {
@@ -46,11 +47,13 @@ namespace Just.Anarchy
         void Stop();
 
         /// <summary>
-        /// Add a schedule to the action factory - some aspects of this will be ignored if TargetPattern is set.
-        /// The schedule will be validated at this point, invalid schedules will be rejected.
+        /// Associates a schedule with the action factory - some aspects of this will be ignored if TargetPattern is set.
+        /// The schedule will be validated at this point, invalid schedules will be rejected, if an existing schedule is set it will be overwritten.
         /// </summary>
         /// <param name="schedule">The schedule to add</param>
-        void WithSchedule(Schedule schedule);
+        /// <exception cref="ScheduleRunningException">Thrown if a schedule is running when this is called</exception>
+        /// <exception cref="UnschedulableActionException">Thrown if the AnarchyActionFactory does not contain an action that implements ICauseScheduledAnarchy</exception>
+        void AssociateSchedule(Schedule schedule);
 
         /// <summary>
         /// Set a target pattern to match, this is null by default and will be ignored on request.

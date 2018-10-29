@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Just.Anarchy", "Just.Anarch
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Just.ContainedAnarchy", "Just.ContainedAnarchy\Just.ContainedAnarchy.csproj", "{553D5743-7696-42CA-89A2-7963AE747471}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Just.Anarchy.Test.Unit", "Just.Anarchy.Test.Unit\Just.Anarchy.Test.Unit.csproj", "{3238A8A2-CB51-40B5-8075-A79F9D0D7A2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Just.Anarchy.Test.Unit", "Just.Anarchy.Test.Unit\Just.Anarchy.Test.Unit.csproj", "{3238A8A2-CB51-40B5-8075-A79F9D0D7A2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Just.Anarchy.Test.Integration", "Just.Anarchy.Test.Integration\Just.Anarchy.Test.Integration.csproj", "{72B52731-FCF2-4C9B-9C60-57E08709BAD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{3238A8A2-CB51-40B5-8075-A79F9D0D7A2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3238A8A2-CB51-40B5-8075-A79F9D0D7A2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3238A8A2-CB51-40B5-8075-A79F9D0D7A2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72B52731-FCF2-4C9B-9C60-57E08709BAD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72B52731-FCF2-4C9B-9C60-57E08709BAD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72B52731-FCF2-4C9B-9C60-57E08709BAD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72B52731-FCF2-4C9B-9C60-57E08709BAD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
