@@ -1,8 +1,10 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Just.Anarchy.Controllers;
+using Just.Anarchy.Test.Common.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -12,11 +14,12 @@ using NUnit.Framework;
 namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
 {
     [TestFixture]
-    public class WhenAScheduleIsSetOnAnExistingValidActionFactory : BaseIntegrationTest
+    public class WhenAScheduleIsUpdatedOnAnExistingValidActionFactoryWithoutASchedule : BaseIntegrationTest
     {
         private HttpClient _client;
         private HttpResponseMessage _response;
         private IAnarchyActionFactory _mockFactory;
+        private Schedule _schedule;
 
         public override void Given()
         {
@@ -25,8 +28,18 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
 
             _mockFactory = Substitute.For<IAnarchyActionFactory>();
             _mockFactory.AnarchyAction.Returns(mockAction);
+            _mockFactory.AssociateSchedule(Arg.Any<Schedule>()).Returns(true);
             _mockFactory.ExecutionSchedule.Returns((Schedule)null);
             _mockFactory.IsActive.Returns(false);
+
+            _schedule = new Schedule
+            {
+                Delay = TimeSpan.FromDays(1),
+                Interval = TimeSpan.FromMilliseconds(2),
+                IterationDuration = TimeSpan.FromMinutes(0),
+                RepeatCount = 4,
+                TotalDuration = TimeSpan.FromMinutes(1)
+            };
 
             var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockFactory));
 
@@ -35,19 +48,19 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
 
         public override async Task WhenAsync()
         {
-            _response = await _client.PostAsync(
+            _response = await _client.PutAsync(
                 Routes.GetSetSchedule.Replace("{anarchyType}", "testAction"),
-                new StringContent(JsonConvert.SerializeObject(new Schedule()), Encoding.UTF8, "application/json"));
+                new StringContent(JsonConvert.SerializeObject(_schedule), Encoding.UTF8, "application/json"));
         }
 
         [Then]
         public void ThenTheResponseHasTheCorrectStatus()
         {
-            _response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            _response.StatusCode.Should().Be(StatusCodes.Status201Created);
         }
 
         [Then]
-        public void TheActionFactoryHasAScheduleSet()
+        public void AndTheActionFactoryHasAScheduleSet()
         {
             _mockFactory.Received(1).AssociateSchedule(Arg.Any<Schedule>());
         }

@@ -4,7 +4,7 @@ using Just.Anarchy.Exceptions;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Just.Anarchy.Test.Unit.Core
+namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
 {
     [TestFixture]
     public class AssignScheduleToAnarchyActionTests
@@ -12,7 +12,7 @@ namespace Just.Anarchy.Test.Unit.Core
         [Test]
         [TestCase("TESTAnarchyType")]
         [TestCase("testAnarchyType")]
-        public void MatchingFactory_ValidSchedule(string anarchyType)
+        public void MatchingFactory_ValidNewSchedule(string anarchyType)
         {
             //arrange
             var schedule = new Schedule();
@@ -23,7 +23,7 @@ namespace Just.Anarchy.Test.Unit.Core
             var sut = new AnarchyManagerNew(new [] { factory });
 
             //act
-            sut.AssignScheduleToAnarchyActionFactory(anarchyType, schedule);
+            sut.AssignScheduleToAnarchyActionFactory(anarchyType, schedule, false);
 
             //assert
             factory.Received(1).AssociateSchedule(schedule);
@@ -45,7 +45,7 @@ namespace Just.Anarchy.Test.Unit.Core
             var sut = new AnarchyManagerNew(new [] { factory });
 
             //act
-            var exception = Assert.Catch(() => sut.AssignScheduleToAnarchyActionFactory(anarchyType, schedule));
+            var exception = Assert.Catch(() => sut.AssignScheduleToAnarchyActionFactory(anarchyType, schedule, false));
 
             //assert
             exception.Should().BeOfType<AnarchyActionNotFoundException>();
@@ -71,7 +71,7 @@ namespace Just.Anarchy.Test.Unit.Core
             var sut = new AnarchyManagerNew(new [] { factory1, factory2 });
 
             //act
-            sut.AssignScheduleToAnarchyActionFactory("firstActionName", schedule);
+            sut.AssignScheduleToAnarchyActionFactory("firstActionName", schedule, false);
 
             //assert
             factory1.Received(firstCount).AssociateSchedule(Arg.Any<Schedule>());
@@ -79,7 +79,7 @@ namespace Just.Anarchy.Test.Unit.Core
         }
 
         [Test]
-        public void MatchingFactory_ScheduleExists()
+        public void MatchingFactory_ScheduleExists_DoNotAllowUpdate()
         {
             //arrange
             var factory = Substitute.For<IAnarchyActionFactory>();
@@ -88,13 +88,33 @@ namespace Just.Anarchy.Test.Unit.Core
             factory.ExecutionSchedule.Returns(new Schedule());
             factory.AnarchyAction.Returns(action);
             var sut = new AnarchyManagerNew(new [] { factory });
+            var schedule = new Schedule();
 
             //act
-            var exception = Assert.Catch(() => sut.AssignScheduleToAnarchyActionFactory("testAnarchyType", new Schedule()));
+            var exception = Assert.Catch(() => sut.AssignScheduleToAnarchyActionFactory("testAnarchyType", new Schedule(), false));
 
             //assert
             exception.Should().BeOfType<ScheduleExistsException>();
-            factory.Received(0).AssociateSchedule(Arg.Any<Schedule>());
+            factory.Received(0).AssociateSchedule(schedule);
+        }
+
+        [Test]
+        public void MatchingFactory_ScheduleExists_AllowUpdate()
+        {
+            //arrange
+            var factory = Substitute.For<IAnarchyActionFactory>();
+            var action = Substitute.For<ICauseAnarchy>();
+            action.Name.Returns("testAnarchyType");
+            factory.ExecutionSchedule.Returns(new Schedule());
+            factory.AnarchyAction.Returns(action);
+            var sut = new AnarchyManagerNew(new[] { factory });
+            var schedule = new Schedule();
+
+            //act
+            sut.AssignScheduleToAnarchyActionFactory("testAnarchyType", schedule, true);
+
+            //assert
+            factory.Received(1).AssociateSchedule(schedule);
         }
     }
 }

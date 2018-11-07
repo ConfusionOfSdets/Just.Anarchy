@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Just.Anarchy.Exceptions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Just.Anarchy.Controllers
 {
@@ -16,8 +14,17 @@ namespace Just.Anarchy.Controllers
         [HttpPost, Route(Routes.GetSetSchedule)]
         public IActionResult SetSchedule(string anarchyType, [FromBody]Schedule schedule)
         {
-            _anarchyManager.AssignScheduleToAnarchyActionFactory(anarchyType, schedule);
-            return new OkResult();
+            _anarchyManager.AssignScheduleToAnarchyActionFactory(anarchyType, schedule, false);
+            return new CreatedResult(GetFullUrl(Routes.GetSetSchedule.Replace("{anarchyType}", anarchyType)), schedule);
+        }
+
+        [HttpPut, Route(Routes.GetSetSchedule)]
+        public IActionResult UpdateSchedule(string anarchyType, [FromBody]Schedule schedule)
+        {
+            var scheduleWasCreated = _anarchyManager.AssignScheduleToAnarchyActionFactory(anarchyType, schedule, true);
+            return scheduleWasCreated ?
+                (IActionResult) new CreatedResult(GetFullUrl(Routes.GetSetSchedule.Replace("{anarchyType}",anarchyType)), schedule) :
+                new OkObjectResult(schedule);
         }
 
         [HttpGet, Route(Routes.GetSetSchedule)]
@@ -32,5 +39,7 @@ namespace Just.Anarchy.Controllers
 
             return new OkObjectResult(schedule);
         }
+
+        private string GetFullUrl(string path) => $"{(this.Request.IsHttps ? "https://" : "http://")}{this.Request.Host}{path}";
     }
 }

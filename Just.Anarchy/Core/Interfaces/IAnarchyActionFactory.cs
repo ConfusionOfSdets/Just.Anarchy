@@ -51,9 +51,10 @@ namespace Just.Anarchy
         /// The schedule will be validated at this point, invalid schedules will be rejected, if an existing schedule is set it will be overwritten.
         /// </summary>
         /// <param name="schedule">The schedule to add</param>
+        /// <returns>true if the schedule was created and false if the schedule was updated.</returns>
         /// <exception cref="ScheduleRunningException">Thrown if a schedule is running when this is called</exception>
         /// <exception cref="UnschedulableActionException">Thrown if the AnarchyActionFactory does not contain an action that implements ICauseScheduledAnarchy</exception>
-        void AssociateSchedule(Schedule schedule);
+        bool AssociateSchedule(Schedule schedule);
 
         /// <summary>
         /// Set a target pattern to match, this is null by default and will be ignored on request.

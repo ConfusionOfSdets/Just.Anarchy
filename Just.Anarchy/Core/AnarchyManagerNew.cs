@@ -4,8 +4,7 @@ using Just.Anarchy.Exceptions;
 
 namespace Just.Anarchy.Core
 {
-    public class AnarchyManagerNew
-        : IAnarchyManagerNew
+    public class AnarchyManagerNew : IAnarchyManagerNew
     {
         private readonly IList<IAnarchyActionFactory> _actionFactories;
 
@@ -14,16 +13,16 @@ namespace Just.Anarchy.Core
             this._actionFactories = actionFactories.ToList();
         }
 
-        public void AssignScheduleToAnarchyActionFactory(string anarchyType, Schedule schedule)
+        public bool AssignScheduleToAnarchyActionFactory(string anarchyType, Schedule schedule, bool allowUpdate)
         {
             var factory = GetFactoryContainingAction(anarchyType);
 
-            if (factory.ExecutionSchedule != null)
+            if (factory.ExecutionSchedule != null && !allowUpdate)
             {
                 throw new ScheduleExistsException();
             }
 
-            factory.AssociateSchedule(schedule);
+            return factory.AssociateSchedule(schedule);
         }
 
         public Schedule GetScheduleFromAnarchyActionFactory(string anarchyType)

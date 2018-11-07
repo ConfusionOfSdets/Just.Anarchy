@@ -3,12 +3,10 @@ using NUnit.Framework;
 
 namespace Just.Anarchy.Test.Integration
 {
+    [TestFixture]
     public abstract class BaseIntegrationTest
     {
-        protected BaseIntegrationTest()
-        {}
-
-        [SetUp]
+        [OneTimeSetUp]
         public virtual async Task Setup()
         {
             await GivenAsync();
@@ -20,19 +18,13 @@ namespace Just.Anarchy.Test.Integration
 
         }
 
-        public virtual async Task GivenAsync()
-        {
-            Given();
-        }
-
         public virtual void When()
         {
 
         }
 
-        public virtual async Task WhenAsync()
-        {
-            When();
-        }
+        public virtual Task GivenAsync() => Task.Run(() => Given());
+
+        public virtual Task WhenAsync() => Task.Run(() => When());
     }
 }
