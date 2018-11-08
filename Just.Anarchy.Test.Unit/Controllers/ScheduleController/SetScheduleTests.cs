@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FluentAssertions;
-using Just.Anarchy.Exceptions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 
 namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
 {
     [TestFixture]
-    public class SetScheduleTests
+    public class SetScheduleTests : BaseControllerTests
     {
         const string anarchyType = "anarchyType";
 
@@ -21,14 +15,52 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
         {
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
-            var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
+            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
             var schedule = new Schedule();
             
             //Act
             sut.SetSchedule(anarchyType, schedule);
 
             //Assert
-            anarchyManager.Received(1).AssignScheduleToAnarchyActionFactory(anarchyType, schedule);
+            anarchyManager.Received(1).AssignScheduleToAnarchyActionFactory(anarchyType, schedule, false);
+        }
+
+        [Test]
+        public void SetSchedule_NoExistingSchedule_ReturnsCreatedResult()
+        {
+            //Arrange
+            var anarchyManager = Substitute.For<IAnarchyManagerNew>();
+            anarchyManager
+                .AssignScheduleToAnarchyActionFactory(Arg.Any<string>(), Arg.Any<Schedule>(), false)
+                .Returns(true);
+            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
+
+            var schedule = new Schedule();
+
+            //Act
+            var result = sut.SetSchedule(anarchyType, schedule);
+
+            //Assert
+            result.Should().BeOfType<CreatedResult>();
+        }
+
+        [Test]
+        public void SetSchedule_NoExistingSchedule_ResultContainsSchedule()
+        {
+            //Arrange
+            var anarchyManager = Substitute.For<IAnarchyManagerNew>();
+            anarchyManager
+                .AssignScheduleToAnarchyActionFactory(Arg.Any<string>(), Arg.Any<Schedule>(), false)
+                .Returns(true);
+            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
+
+            var schedule = new Schedule();
+
+            //Act
+            var result = sut.SetSchedule(anarchyType, schedule);
+
+            //Assert
+            ((CreatedResult)result).Value.Should().Be(schedule);
         }
     }
 }

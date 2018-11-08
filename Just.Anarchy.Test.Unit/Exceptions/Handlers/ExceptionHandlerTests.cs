@@ -60,7 +60,6 @@ namespace Just.Anarchy.Test.Unit.Exceptions.Handlers
             new object[] { new ScheduleRunningExceptionHandler(), new ScheduleRunningException(), "schedule-running", StatusCodes.Status400BadRequest },
             new object[] { new UnschedulableActionExceptionHandler(), new UnschedulableActionException(), "unschedulable-action-type", StatusCodes.Status400BadRequest },
             new object[] { new AnarchyActionNotFoundExceptionHandler(), new AnarchyActionNotFoundException(), "anarchy-action-not-found", StatusCodes.Status404NotFound }
-
         };
 
         [TestCaseSource(nameof(HandleAsyncPassingCases))]

@@ -68,7 +68,7 @@ namespace Just.Anarchy
             IsActive = false;
         }
 
-        public void AssociateSchedule(Schedule schedule)
+        public bool AssociateSchedule(Schedule schedule)
         {
             if (!(AnarchyAction is ICauseScheduledAnarchy))
             {
@@ -81,7 +81,11 @@ namespace Just.Anarchy
                 throw new ScheduleRunningException();
             }
 
-            this.ExecutionSchedule = schedule;           
+            var created = ExecutionSchedule == null;
+
+            ExecutionSchedule = schedule;
+
+            return created;
         }
 
         public void ForTargetPattern(string pattern)

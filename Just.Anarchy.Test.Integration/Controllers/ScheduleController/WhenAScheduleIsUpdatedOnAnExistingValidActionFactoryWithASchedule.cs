@@ -12,7 +12,7 @@ using NUnit.Framework;
 namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
 {
     [TestFixture]
-    public class WhenAScheduleIsSetOnAnExistingValidActionFactory : BaseIntegrationTest
+    public class WhenAScheduleIsUpdatedOnAnExistingValidActionFactoryWithASchedule : BaseIntegrationTest
     {
         private HttpClient _client;
         private HttpResponseMessage _response;
@@ -25,7 +25,7 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
 
             _mockFactory = Substitute.For<IAnarchyActionFactory>();
             _mockFactory.AnarchyAction.Returns(mockAction);
-            _mockFactory.ExecutionSchedule.Returns((Schedule)null);
+            _mockFactory.ExecutionSchedule.Returns(new Schedule());
             _mockFactory.IsActive.Returns(false);
 
             var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockFactory));
@@ -35,15 +35,15 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
 
         public override async Task WhenAsync()
         {
-            _response = await _client.PostAsync(
-                    Routes.GetSetSchedule.Replace("{anarchyType}", "testAction"),
+            _response = await _client.PutAsync(
+                Routes.GetSetSchedule.Replace("{anarchyType}", "testAction"),
                 new StringContent(JsonConvert.SerializeObject(new Schedule()), Encoding.UTF8, "application/json"));
         }
 
         [Then]
         public void ThenTheResponseHasTheCorrectStatus()
         {
-            _response.StatusCode.Should().Be(StatusCodes.Status201Created);
+            _response.StatusCode.Should().Be(StatusCodes.Status200OK);
         }
 
         [Then]
