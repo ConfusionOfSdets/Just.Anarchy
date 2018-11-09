@@ -3,6 +3,8 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Just.Anarchy.Controllers;
+using Just.Anarchy.Core;
+using Just.Anarchy.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -36,7 +38,7 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
         public override async Task WhenAsync()
         {
             _response = await _client.PutAsync(
-                Routes.GetSetSchedule.Replace("{anarchyType}", "testAction"),
+                Routes.Schedule.GetSetUpdate.Replace("{anarchyType}", "testAction"),
                 new StringContent(JsonConvert.SerializeObject(new Schedule()), Encoding.UTF8, "application/json"));
         }
 

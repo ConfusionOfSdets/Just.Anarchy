@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Just.Anarchy.Core.Enums;
 
-namespace Just.Anarchy
+namespace Just.Anarchy.Core.Interfaces
 {
     public interface ICauseAnarchy
     {

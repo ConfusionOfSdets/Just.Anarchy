@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Just.Anarchy.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Just.Anarchy.Controllers

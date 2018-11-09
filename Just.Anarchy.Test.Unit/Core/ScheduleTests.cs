@@ -1,5 +1,7 @@
 ﻿using System;
 using FluentAssertions;
+using Just.Anarchy.Core;
+using Just.Anarchy.Test.Common.Utilities;
 using NUnit.Framework;
 
 namespace Just.Anarchy.Test.Unit.Core
@@ -11,7 +13,7 @@ namespace Just.Anarchy.Test.Unit.Core
         public void ConstructorSetsDefaultDelayCorrectly()
         {
             //Act
-            var sut = new Schedule();
+            var sut = It.IsAny<Schedule>();
 
             //Assert
             sut.Delay.Should().Be(TimeSpan.Zero);

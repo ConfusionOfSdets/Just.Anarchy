@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Just.Anarchy.Exceptions;
+﻿using Just.Anarchy.Exceptions;
 
-namespace Just.Anarchy
+namespace Just.Anarchy.Core.Interfaces
 {
     /// <summary>
     /// Provides an interface to specify how an action factory behaves

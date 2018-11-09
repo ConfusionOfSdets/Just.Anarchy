@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Just.Anarchy
+﻿namespace Just.Anarchy.Core.Interfaces
 {
     public interface IScheduler
     {

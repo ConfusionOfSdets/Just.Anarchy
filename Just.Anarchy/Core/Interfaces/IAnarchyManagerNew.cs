@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Just.Anarchy.Core.Dtos;
 using Just.Anarchy.Exceptions;
 
-namespace Just.Anarchy
+namespace Just.Anarchy.Core.Interfaces
 {
     public interface IAnarchyManagerNew
     {
@@ -26,5 +26,11 @@ namespace Just.Anarchy
         /// <returns>An instance of the schedule or null if no schedule has been set.</returns>
         /// <exception cref="AnarchyActionNotFoundException">This exception is thrown if the anarchy action factory cannot be found</exception>
         Schedule GetScheduleFromAnarchyActionFactory(string anarchyType);
+
+        /// <summary>
+        /// Retrieves a named list of schedules for all schedulable anarchy action factories
+        /// </summary>
+        /// <returns>A list of NamedScheduleDto for all schedulable anarchyaction factories.</returns>
+        IEnumerable<NamedScheduleDto> GetAllSchedulesFromFactories();
     }
 }

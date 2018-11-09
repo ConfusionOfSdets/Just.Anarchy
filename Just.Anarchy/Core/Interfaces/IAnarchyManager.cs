@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Just.Anarchy.Core.Enums;
 
-namespace Just.Anarchy
+namespace Just.Anarchy.Core.Interfaces
 {
     public interface IAnarchyManager
     {

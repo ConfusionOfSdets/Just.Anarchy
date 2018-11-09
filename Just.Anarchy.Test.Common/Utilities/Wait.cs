@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
+using Just.Anarchy.Test.Common.Exceptions;
 
-namespace Just.Anarchy.Test.Unit.utils
+namespace Just.Anarchy.Test.Common.Utilities
 {
     public static class Wait
     {

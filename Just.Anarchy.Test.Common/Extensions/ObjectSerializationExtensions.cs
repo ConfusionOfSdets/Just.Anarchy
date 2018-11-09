@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
-namespace Just.Anarchy.Test.Common.Utilities
+namespace Just.Anarchy.Test.Common.Extensions
 {
     public static class ObjectSerializationExtensions
     {
