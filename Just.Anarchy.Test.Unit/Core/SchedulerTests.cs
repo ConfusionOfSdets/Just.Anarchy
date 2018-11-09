@@ -108,11 +108,11 @@ namespace Just.Anarchy.Test.Unit.Core
         public async Task ScheduleTotalDurationOverridesRepeatCount()
         {
             var expExecutionCount = 2;
-            var expTotalDuration = TimeSpan.FromSeconds(1);
+            var expTotalDuration = TimeSpan.FromSeconds(1.8);
 
             //arrange
             var schedule = new Schedule()
-                .WithInterval(TimeSpan.FromSeconds(0.5))
+                .WithInterval(TimeSpan.FromSeconds(1))
                 .FinishAfter(expTotalDuration)
                 .Repeat(3);
 
@@ -121,7 +121,7 @@ namespace Just.Anarchy.Test.Unit.Core
 
             //act
             sut.StartSchedule();
-            var duration = await Wait.AndTimeActionAsync(() => !sut.Running, 1.1);
+            var duration = await Wait.AndTimeActionAsync(() => !sut.Running, 1.9);
 
             //assert
             await action

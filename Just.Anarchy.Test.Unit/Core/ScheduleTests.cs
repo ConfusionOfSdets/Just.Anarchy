@@ -13,7 +13,7 @@ namespace Just.Anarchy.Test.Unit.Core
         public void ConstructorSetsDefaultDelayCorrectly()
         {
             //Act
-            var sut = It.IsAny<Schedule>();
+            var sut = new Schedule();
 
             //Assert
             sut.Delay.Should().Be(TimeSpan.Zero);
