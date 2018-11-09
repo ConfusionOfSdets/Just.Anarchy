@@ -70,7 +70,7 @@ namespace Just.Anarchy.Test.Unit.Core
         public async Task StartScheduleTriggersActionExecutionWithCorrectDurationNull()
         {
             //arrange;
-            var schedule = Get.CustomBuilderFor.Schedule                .Repeat(1);
+            var schedule = Get.CustomBuilderFor.Schedule.Repeat(1);
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
             var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithoutDelays());
 
