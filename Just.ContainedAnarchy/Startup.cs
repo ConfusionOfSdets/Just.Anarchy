@@ -26,9 +26,14 @@ namespace Just.ContainedAnarchy
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddMvc()
+                .AddMvc(options =>
+                {
+                    options.Filters.Add(new SampleActionFilter());
+                })
                 .AddAnarchy()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

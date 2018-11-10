@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Just.ContainedAnarchy.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Just.ContainedAnarchy.Controllers
@@ -26,7 +27,7 @@ namespace Just.ContainedAnarchy.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] SampleModel model)
         {
         }
 
@@ -40,6 +41,13 @@ namespace Just.ContainedAnarchy.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+        [HttpPost]
+        [Route("api/sample")]
+        public void Sample([FromBody] SampleModel model)
+        {
+
         }
     }
 }
