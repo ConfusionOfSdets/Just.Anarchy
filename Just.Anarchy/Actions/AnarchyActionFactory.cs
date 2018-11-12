@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
+using Just.Anarchy.Extensions;
 
 namespace Just.Anarchy.Actions
 {
@@ -49,22 +50,14 @@ namespace Just.Anarchy.Actions
 
         public void TriggerOnce(TimeSpan? duration)
         {
-            if (!(AnarchyAction is ICauseScheduledAnarchy))
-            {
-                //TODO: are ALL schedules invalid in the case of a per request action?  What about duration only?
-                throw new UnschedulableActionException();
-            }
-
-            if (IsActive)
-            {
-                throw new ScheduleRunningException();
-            }
+            CheckActionIsSchedulable();
 
             IsActive = true;
 
             _cancellationTokenSource = new CancellationTokenSource();
 
-            AnarchyAction.ExecuteAsync(duration, _cancellationTokenSource.Token)
+            AnarchyAction
+                .ExecuteAsync(duration, _cancellationTokenSource.Token)
                 .ContinueWith(_ => IsActive = false);
         }
 
@@ -93,16 +86,7 @@ namespace Just.Anarchy.Actions
 
         public bool AssociateSchedule(Schedule schedule)
         {
-            if (!(AnarchyAction is ICauseScheduledAnarchy))
-            {
-                //TODO: are ALL schedules invalid in the case of a per request action?  What about duration only?
-                throw new UnschedulableActionException();
-            }
-
-            if (IsActive)
-            {
-                throw new ScheduleRunningException();
-            }
+            CheckActionIsSchedulable();
 
             var created = ExecutionSchedule == null;
 
@@ -133,6 +117,20 @@ namespace Just.Anarchy.Actions
             {
                 _scheduler = new Scheduler(ExecutionSchedule, scheduledAction, _timer);
                 _scheduler.StartSchedule();
+            }
+        }
+
+        private void CheckActionIsSchedulable()
+        {
+            if (AnarchyAction.IsNotOfType<ICauseScheduledAnarchy>())
+            {
+                //TODO: are ALL schedules invalid in the case of a per request action?  What about duration only?
+                throw new UnschedulableActionException();
+            }
+
+            if (IsActive)
+            {
+                throw new ScheduleRunningException();
             }
         }
 

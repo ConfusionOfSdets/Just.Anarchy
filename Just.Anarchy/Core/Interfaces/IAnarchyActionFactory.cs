@@ -61,7 +61,6 @@ namespace Just.Anarchy.Core.Interfaces
         /// Performs a one-off execution of the action, only applicable to actions of type ICauseScheduledAnarchy, also will not fire if there is an active schedule.
         /// </summary>
         /// <param name="duration">The length of time to execute the action</param>
-        /// <param name="ct">A Cancellation token that can cut the action execution short if aborted</param>
         /// <exception cref="ScheduleRunningException">Thrown if a schedule is running when this is called</exception>
         /// <exception cref="UnschedulableActionException">Thrown if the AnarchyActionFactory does not contain an action that implements ICauseScheduledAnarchy</exception>
         void TriggerOnce(TimeSpan? duration);
