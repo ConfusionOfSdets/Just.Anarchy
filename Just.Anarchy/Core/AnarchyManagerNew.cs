@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Just.Anarchy.Core.Dtos;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
@@ -40,6 +42,12 @@ namespace Just.Anarchy.Core
                 .OrderBy(n => n.Name);
         }
 
+        public void TriggerAction(string anarchyType, TimeSpan? duration)
+        {
+            var factory = GetFactoryContainingAction(anarchyType);
+            factory.TriggerOnce(duration);
+        }
+
         private IAnarchyActionFactory GetFactoryContainingAction(string anarchyType)
         {
             var factory = _actionFactories.FirstOrDefault(f => f.AnarchyAction.Name.ToLower().Equals(anarchyType?.ToLower()));
@@ -51,5 +59,7 @@ namespace Just.Anarchy.Core
 
             return factory;
         }
+
+
     }
 }

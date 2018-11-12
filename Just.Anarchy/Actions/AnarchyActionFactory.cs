@@ -47,6 +47,27 @@ namespace Just.Anarchy.Actions
             }
         }
 
+        public void TriggerOnce(TimeSpan? duration)
+        {
+            if (!(AnarchyAction is ICauseScheduledAnarchy))
+            {
+                //TODO: are ALL schedules invalid in the case of a per request action?  What about duration only?
+                throw new UnschedulableActionException();
+            }
+
+            if (IsActive)
+            {
+                throw new ScheduleRunningException();
+            }
+
+            IsActive = true;
+
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            AnarchyAction.ExecuteAsync(duration, _cancellationTokenSource.Token)
+                .ContinueWith(_ => IsActive = false);
+        }
+
         public void Start()
         {
             _cancellationTokenSource = new CancellationTokenSource();
