@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Just.Anarchy.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +16,11 @@ namespace Just.Anarchy.Controllers
         [HttpPost, Route(Routes.Anarchy.Trigger)]
         public IActionResult TriggerAction(string anarchyType, int? durationSecs)
         {
-           _anarchyManager.TriggerAction(anarchyType, TimeSpan.FromSeconds(durationSecs ?? 10));
+           var duration = durationSecs.HasValue ? 
+               TimeSpan.FromSeconds(durationSecs.Value) : 
+               (TimeSpan?)null;
+
+           _anarchyManager.TriggerAction(anarchyType, duration);
            return new AcceptedResult();
         }
 

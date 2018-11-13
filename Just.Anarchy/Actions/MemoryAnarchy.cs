@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +12,7 @@ namespace Just.Anarchy.Actions
         public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.Passive;
         public string Name => nameof(MemoryAnarchy);
         public bool Active { get; set; } = false;
-
+        public TimeSpan DefaultDuration { get; } = TimeSpan.FromMinutes(1);
         public int StatusCode => 0;
 
         // TODO: AmountMb needs to be parameterized.
@@ -36,12 +34,11 @@ namespace Just.Anarchy.Actions
                 );
 
                 // Hold the memory for the allotted duration (or 1 min)
-                await Task.Delay(duration ?? TimeSpan.FromMinutes(1), cancellationToken);
+                await Task.Delay(duration ?? DefaultDuration, cancellationToken);
                 
                 // Release Memory
                 Marshal.FreeHGlobal(pointer);
             }, cancellationToken);
-
         }
     }
 }

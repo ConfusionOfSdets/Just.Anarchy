@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Just.Anarchy.Core.Dtos;
 using Just.Anarchy.Exceptions;
 
@@ -39,7 +38,7 @@ namespace Just.Anarchy.Core.Interfaces
         /// Triggers a schedulable anarchy action immediately.
         /// </summary>
         /// <param name="anarchyType">The anarchy type to trigger</param>
-        /// <param name="duration">The time to run the anarchy action for</param>
+        /// <param name="duration">The time to run the anarchy action for, if null this will be set to a default defined in the underlying anarchy action.</param>
         /// <exception cref="AnarchyActionNotFoundException">This exception is thrown if the anarchy action factory cannot be found</exception>
         /// <exception cref="UnschedulableActionException">This exception is thrown if the anarchy type does not implement ICauseScheduledAnarchy.</exception>
         /// <exception cref="ScheduleRunningException">This exception is thrown if the anarchy action factory containing the anarchy type is already running a schedule (and so cannot be triggered directly).</exception>

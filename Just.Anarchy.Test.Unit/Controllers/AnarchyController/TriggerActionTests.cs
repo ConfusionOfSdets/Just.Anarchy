@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using FluentAssertions;
-using Just.Anarchy.Core.Dtos;
 using Just.Anarchy.Core.Interfaces;
-using Just.Anarchy.Exceptions;
-using Just.Anarchy.Responses;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 
 namespace Just.Anarchy.Test.Unit.Controllers.AnarchyController
@@ -40,11 +35,11 @@ namespace Just.Anarchy.Test.Unit.Controllers.AnarchyController
             sut.TriggerAction("aFakeAnarchyType", null);
 
             //Assert
-            anarchyManager.Received(1).TriggerAction("aFakeAnarchyType", TimeSpan.FromSeconds(10));
+            anarchyManager.Received(1).TriggerAction("aFakeAnarchyType", null);
         }
 
         [Test]
-        public void TriggerAction_CallsAnarchyManager_DurationOverridden()
+        public void TriggerAction_CallsAnarchyManager_DurationSpecified()
         {
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
