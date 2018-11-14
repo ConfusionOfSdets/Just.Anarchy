@@ -5,6 +5,7 @@ using FluentAssertions;
 using Just.Anarchy.Controllers;
 using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Test.Common.Builders;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -22,13 +23,10 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
 
         public override void Given()
         {
-            var mockAction = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            mockAction.Name.Returns("testAction");
-
-            _mockFactory = Substitute.For<IAnarchyActionFactory>();
-            _mockFactory.AnarchyAction.Returns(mockAction);
-            _mockFactory.ExecutionSchedule.Returns((Schedule)null);
-            _mockFactory.IsActive.Returns(false);
+            _mockFactory = Get.MotherFor.MockAnarchyActionFactory
+                .FactoryWithoutScheduleNamed("testAction")
+                .WithIsActive(false)
+                .Build();
 
             var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockFactory));
 

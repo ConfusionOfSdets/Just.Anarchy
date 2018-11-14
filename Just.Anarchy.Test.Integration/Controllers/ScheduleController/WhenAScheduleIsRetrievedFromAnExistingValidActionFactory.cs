@@ -6,6 +6,7 @@ using FluentAssertions;
 using Just.Anarchy.Controllers;
 using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Test.Common.Builders;
 using Just.Anarchy.Test.Common.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,13 +37,12 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
                 TotalDuration = TimeSpan.FromDays(1)
             };
 
-            var mockAction = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            mockAction.Name.Returns("testAction");
+            _mockFactory = Get.MotherFor.MockAnarchyActionFactory
+                .FactoryWithScheduleNamed("testAction")
+                .WithIsActive(false)
+                .Build();
 
-            _mockFactory = Substitute.For<IAnarchyActionFactory>();
-            _mockFactory.AnarchyAction.Returns(mockAction);
             _mockFactory.ExecutionSchedule.Returns(_schedule).AndDoes(_ => _scheduleRetrieved = true);
-            _mockFactory.IsActive.Returns(false);
 
             var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockFactory));
 
