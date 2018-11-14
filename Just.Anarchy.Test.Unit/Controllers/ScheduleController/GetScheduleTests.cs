@@ -1,4 +1,8 @@
 ﻿using FluentAssertions;
+using Just.Anarchy.Core;
+using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Test.Common.Builders;
+using Just.Anarchy.Test.Common.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using NUnit.Framework;
@@ -15,7 +19,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
         {
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
-            var schedule = new Schedule();
+            var schedule = It.IsAny<Schedule>();
             anarchyManager.GetScheduleFromAnarchyActionFactory(Arg.Any<string>()).Returns(schedule);
             var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
             

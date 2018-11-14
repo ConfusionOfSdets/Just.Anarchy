@@ -2,7 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Just.Anarchy.Test.Unit.utils;
+using Just.Anarchy.Core;
+using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Test.Common.Builders;
+using Just.Anarchy.Test.Common.Utilities;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -47,7 +50,7 @@ namespace Just.Anarchy.Test.Unit.Core
         {
             //arrange
             var oneMillisecond = TimeSpan.FromMilliseconds(1);
-            var schedule = new Schedule()
+            var schedule = Get.CustomBuilderFor.Schedule
                 .For(oneMillisecond)
                 .Repeat(1);
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
@@ -67,8 +70,7 @@ namespace Just.Anarchy.Test.Unit.Core
         public async Task StartScheduleTriggersActionExecutionWithCorrectDurationNull()
         {
             //arrange;
-            var schedule = new Schedule()
-                .Repeat(1);
+            var schedule = Get.CustomBuilderFor.Schedule.Repeat(1);
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
             var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithoutDelays());
 
@@ -106,11 +108,11 @@ namespace Just.Anarchy.Test.Unit.Core
         public async Task ScheduleTotalDurationOverridesRepeatCount()
         {
             var expExecutionCount = 2;
-            var expTotalDuration = TimeSpan.FromSeconds(1);
+            var expTotalDuration = TimeSpan.FromSeconds(1.8);
 
             //arrange
             var schedule = new Schedule()
-                .WithInterval(TimeSpan.FromSeconds(0.5))
+                .WithInterval(TimeSpan.FromSeconds(1))
                 .FinishAfter(expTotalDuration)
                 .Repeat(3);
 
@@ -119,7 +121,7 @@ namespace Just.Anarchy.Test.Unit.Core
 
             //act
             sut.StartSchedule();
-            var duration = await Wait.AndTimeActionAsync(() => !sut.Running, 1.1);
+            var duration = await Wait.AndTimeActionAsync(() => !sut.Running, 1.9);
 
             //assert
             await action

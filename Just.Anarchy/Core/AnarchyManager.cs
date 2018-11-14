@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Just.Anarchy.Core.Enums;
+using Just.Anarchy.Core.Interfaces;
 
-namespace Just.Anarchy
+namespace Just.Anarchy.Core
 {
     public class AnarchyManager : IAnarchyManager
     {

@@ -5,7 +5,7 @@ using FluentAssertions;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using Just.Anarchy.Exceptions.Handlers;
-using Just.Anarchy.Test.Unit.utils;
+using Just.Anarchy.Test.Common.Extensions;
 using Microsoft.AspNetCore.Http;
 using NUnit.Framework;
 

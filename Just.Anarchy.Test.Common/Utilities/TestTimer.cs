@@ -1,5 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Just.Anarchy.Core;
+using Just.Anarchy.Core.Interfaces;
 using NSubstitute;
 
 namespace Just.Anarchy.Test.Common.Utilities

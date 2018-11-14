@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Just.Anarchy.Core.Enums;
+using Just.Anarchy.Core.Interfaces;
 
 namespace Just.Anarchy.Actions
 {

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Just.Anarchy.Core.Dtos;
+using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 
 namespace Just.Anarchy.Core
@@ -28,6 +30,14 @@ namespace Just.Anarchy.Core
         public Schedule GetScheduleFromAnarchyActionFactory(string anarchyType)
         {
             return GetFactoryContainingAction(anarchyType)?.ExecutionSchedule;
+        }
+
+        public IEnumerable<NamedScheduleDto> GetAllSchedulesFromFactories()
+        {
+            return _actionFactories
+                .Where(a => a.AnarchyAction is ICauseScheduledAnarchy)
+                .Select(s => new NamedScheduleDto(s.AnarchyAction.Name, s.ExecutionSchedule))
+                .OrderBy(n => n.Name);
         }
 
         private IAnarchyActionFactory GetFactoryContainingAction(string anarchyType)

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Just.Anarchy.Core;
+using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using NSubstitute;
 using NUnit.Framework;

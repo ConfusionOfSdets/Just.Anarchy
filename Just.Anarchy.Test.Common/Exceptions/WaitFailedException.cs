@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Just.Anarchy.Test.Unit.utils
+namespace Just.Anarchy.Test.Common.Exceptions
 {
     public class WaitFailedException : Exception
     {

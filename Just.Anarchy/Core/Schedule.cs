@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Just.Anarchy
+namespace Just.Anarchy.Core
 {
     public class Schedule
     {

@@ -13,7 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Just.Anarchy.Test.Common\Just.Anarchy.Test.Common.csproj" />
     <ProjectReference Include="..\Just.Anarchy\Just.Anarchy.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="utils\" />
   </ItemGroup>
 
 </Project>

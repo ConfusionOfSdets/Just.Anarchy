@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 
-namespace Just.Anarchy.Test.Unit.utils
+namespace Just.Anarchy.Test.Common.Extensions
 {
     public static class StreamExtensions
     {

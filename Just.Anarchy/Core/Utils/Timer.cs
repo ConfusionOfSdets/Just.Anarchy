@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Just.Anarchy.Core.Interfaces;
 
-namespace Just.Anarchy
+namespace Just.Anarchy.Core.Utils
 {
     public class Timer : IHandleTime
     {

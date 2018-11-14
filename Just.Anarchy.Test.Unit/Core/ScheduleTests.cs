@@ -1,5 +1,7 @@
 ﻿using System;
 using FluentAssertions;
+using Just.Anarchy.Core;
+using Just.Anarchy.Test.Common.Utilities;
 using NUnit.Framework;
 
 namespace Just.Anarchy.Test.Unit.Core
