@@ -59,7 +59,5 @@ namespace Just.Anarchy.Core
 
             return factory;
         }
-
-
     }
 }
