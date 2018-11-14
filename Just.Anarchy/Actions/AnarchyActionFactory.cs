@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -31,6 +32,7 @@ namespace Just.Anarchy.Actions
             _timer = timer;
             AnarchyAction = anarchyAction;
             _executionInstances = new ConcurrentBag<Task>();
+            _cancellationTokenSource = new CancellationTokenSource();
             IsActive = false;
         }
 
@@ -54,11 +56,11 @@ namespace Just.Anarchy.Actions
 
             IsActive = true;
 
-            _cancellationTokenSource = new CancellationTokenSource();
-
-            AnarchyAction
+            var task = AnarchyAction
                 .ExecuteAsync(duration, _cancellationTokenSource.Token)
                 .ContinueWith(_ => IsActive = false);
+
+            _executionInstances.Add(task);
         }
 
         public void Start()
@@ -87,6 +89,7 @@ namespace Just.Anarchy.Actions
         public bool AssociateSchedule(Schedule schedule)
         {
             CheckActionIsSchedulable();
+            CheckScheduleIsNotRunning();
 
             var created = ExecutionSchedule == null;
 
@@ -124,10 +127,12 @@ namespace Just.Anarchy.Actions
         {
             if (AnarchyAction.IsNotOfType<ICauseScheduledAnarchy>())
             {
-                //TODO: are ALL schedules invalid in the case of a per request action?  What about duration only?
                 throw new UnschedulableActionException();
             }
+        }
 
+        private void CheckScheduleIsNotRunning()
+        {
             if (IsActive)
             {
                 throw new ScheduleRunningException();
