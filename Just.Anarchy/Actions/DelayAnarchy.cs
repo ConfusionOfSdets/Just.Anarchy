@@ -15,11 +15,10 @@ namespace Just.Anarchy.Actions
         public int StatusCode => 0;
 
         public string Body => "";
+
         public Task ExecuteAsync(TimeSpan? duration, CancellationToken cancellationToken)
         {
-            var random = new Random();
-            var randomSecs = random.Next(1, 60);
-            return Task.Delay(TimeSpan.FromSeconds(randomSecs), cancellationToken);
+            return Task.Delay(duration ?? TimeSpan.FromSeconds(5), cancellationToken);
         }
     }
 }

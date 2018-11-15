@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -12,10 +13,10 @@ using Newtonsoft.Json;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
+namespace Just.Anarchy.Test.Integration.Controllers.AnarchyController
 {
     [TestFixture]
-    public class WhenAScheduleIsUpdatedOnAnExistingValidActionFactoryWithASchedule : BaseIntegrationTest
+    public class WhenAnActionIsTriggeredOnce : BaseIntegrationTest
     {
         private HttpClient _client;
         private HttpResponseMessage _response;
@@ -24,7 +25,7 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
         public override void Given()
         {
             _mockFactory = Get.MotherFor.MockAnarchyActionFactory
-                .FactoryWithScheduleNamed("testAction")
+                .FactoryWithoutScheduleNamed("testAction")
                 .WithIsActive(false)
                 .Build();
 
@@ -35,21 +36,21 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
 
         public override async Task WhenAsync()
         {
-            _response = await _client.PutAsync(
-                Routes.Schedule.GetSetUpdate.Replace("{anarchyType}", "testAction"),
+            _response = await _client.PostAsync(
+                    Routes.Anarchy.Trigger.Replace("{anarchyType}", "testAction"),
                 new StringContent(JsonConvert.SerializeObject(new Schedule()), Encoding.UTF8, "application/json"));
         }
 
         [Then]
         public void ThenTheResponseHasTheCorrectStatus()
         {
-            _response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            _response.StatusCode.Should().Be(StatusCodes.Status202Accepted);
         }
 
         [Then]
         public void TheActionFactoryHasAScheduleSet()
         {
-            _mockFactory.Received(1).AssociateSchedule(Arg.Any<Schedule>());
+            _mockFactory.Received(1).TriggerOnce(Arg.Any<TimeSpan?>());
         }
     }
 }

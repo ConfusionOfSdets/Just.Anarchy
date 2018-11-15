@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
+using Just.Anarchy.Extensions;
 
 namespace Just.Anarchy.Actions
 {
@@ -30,6 +32,7 @@ namespace Just.Anarchy.Actions
             _timer = timer;
             AnarchyAction = anarchyAction;
             _executionInstances = new ConcurrentBag<Task>();
+            _cancellationTokenSource = new CancellationTokenSource();
             IsActive = false;
         }
 
@@ -45,6 +48,19 @@ namespace Just.Anarchy.Actions
                 var execution = AnarchyAction.ExecuteAsync(ExecutionSchedule?.IterationDuration, _cancellationTokenSource.Token);
                 _executionInstances.Add(execution);
             }
+        }
+
+        public void TriggerOnce(TimeSpan? duration)
+        {
+            CheckActionIsSchedulable();
+
+            IsActive = true;
+
+            var task = AnarchyAction
+                .ExecuteAsync(duration, _cancellationTokenSource.Token)
+                .ContinueWith(_ => IsActive = false);
+
+            _executionInstances.Add(task);
         }
 
         public void Start()
@@ -72,16 +88,8 @@ namespace Just.Anarchy.Actions
 
         public bool AssociateSchedule(Schedule schedule)
         {
-            if (!(AnarchyAction is ICauseScheduledAnarchy))
-            {
-                //TODO: are ALL schedules invalid in the case of a per request action?  What about duration only?
-                throw new UnschedulableActionException();
-            }
-
-            if (IsActive)
-            {
-                throw new ScheduleRunningException();
-            }
+            CheckActionIsSchedulable();
+            CheckScheduleIsNotRunning();
 
             var created = ExecutionSchedule == null;
 
@@ -112,6 +120,22 @@ namespace Just.Anarchy.Actions
             {
                 _scheduler = new Scheduler(ExecutionSchedule, scheduledAction, _timer);
                 _scheduler.StartSchedule();
+            }
+        }
+
+        private void CheckActionIsSchedulable()
+        {
+            if (AnarchyAction.IsNotOfType<ICauseScheduledAnarchy>())
+            {
+                throw new UnschedulableActionException();
+            }
+        }
+
+        private void CheckScheduleIsNotRunning()
+        {
+            if (IsActive)
+            {
+                throw new ScheduleRunningException();
             }
         }
 

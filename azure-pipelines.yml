@@ -14,7 +14,7 @@ steps:
   displayName: Build
   env:
     pswd: $(dockerPassword)
-- script: find -wholename **/Just.Anarchy.Test*/*.csproj -print | xargs -i dotnet test {} --configuration $(buildConfiguration) --logger trx
+- script: find -wholename **/Just.Anarchy.Test*/*.csproj ! -name *.Test.Common.csproj -print | xargs -i dotnet test {} --configuration $(buildConfiguration) --logger trx
   displayName: Run Tests
   failOnStderr: true
 - script: dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)

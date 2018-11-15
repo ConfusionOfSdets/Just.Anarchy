@@ -12,16 +12,16 @@ namespace Just.Anarchy.Actions
         public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.Passive;
         public string Name => nameof(CpuAnarchy);
         public bool Active { get; set; } = false;
-
+        public TimeSpan DefaultDuration { get; } = TimeSpan.FromMinutes(1);
         public int StatusCode => 0;
-
         public string Body => string.Empty;
+
+        private readonly TimeSpan _defaultDuration = TimeSpan.FromSeconds(10);
+
         public Task ExecuteAsync(TimeSpan? duration, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
-                var random = new Random();
-                var randomSecs = random.Next(1, 20);
                 try
                 {
                     Enumerable
@@ -32,7 +32,7 @@ namespace Just.Anarchy.Actions
                         .WithCancellation(cancellationToken)
                         .Select(i =>
                         {
-                            var end = DateTime.Now + TimeSpan.FromSeconds(randomSecs);
+                            var end = DateTime.Now + (duration ?? DefaultDuration);
                             while (DateTime.Now < end && !cancellationToken.IsCancellationRequested)
                                 /*nothing here */
                                 ;

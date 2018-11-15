@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Just.Anarchy.Core.Dtos;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
@@ -38,6 +40,12 @@ namespace Just.Anarchy.Core
                 .Where(a => a.AnarchyAction is ICauseScheduledAnarchy)
                 .Select(s => new NamedScheduleDto(s.AnarchyAction.Name, s.ExecutionSchedule))
                 .OrderBy(n => n.Name);
+        }
+
+        public void TriggerAction(string anarchyType, TimeSpan? duration)
+        {
+            var factory = GetFactoryContainingAction(anarchyType);
+            factory.TriggerOnce(duration);
         }
 
         private IAnarchyActionFactory GetFactoryContainingAction(string anarchyType)
