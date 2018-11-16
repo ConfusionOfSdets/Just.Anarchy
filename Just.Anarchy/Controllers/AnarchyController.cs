@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Just.Anarchy.Controllers
@@ -13,15 +15,24 @@ namespace Just.Anarchy.Controllers
             _anarchyManager = anarchyManager;
         }
 
+        [HttpPost, Route(Routes.Anarchy.SetOnRequestHandling)]
+        public IActionResult SetActionTargetPattern(string anarchyType, [FromBody]EnableOnRequestHandlingRequest request)
+        { 
+            //TODO: Validate request?
+            _anarchyManager.AssignTargetPattern(anarchyType, request.TargetPattern);
+
+            return new OkResult();
+        }
+
         [HttpPost, Route(Routes.Anarchy.Trigger)]
         public IActionResult TriggerAction(string anarchyType, int? durationSecs)
         {
-           var duration = durationSecs.HasValue ? 
-               TimeSpan.FromSeconds(durationSecs.Value) : 
-               (TimeSpan?)null;
+            var duration = durationSecs.HasValue ?
+                TimeSpan.FromSeconds(durationSecs.Value) :
+                (TimeSpan?)null;
 
-           _anarchyManager.TriggerAction(anarchyType, duration);
-           return new AcceptedResult();
+            _anarchyManager.TriggerAction(anarchyType, duration);
+            return new AcceptedResult();
         }
 
         //[Route("status/anarchy/state")]

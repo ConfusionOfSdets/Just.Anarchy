@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Just.Anarchy.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Core.Interfaces
 {
@@ -28,11 +29,24 @@ namespace Just.Anarchy.Core.Interfaces
         Schedule ExecutionSchedule { get; }
 
         /// <summary>
+        /// Returns true if the anarchy action will trigger on all requests and false if not.
+        /// </summary>
+        bool ShouldHandleRequests { get; set; }
+
+        /// <summary>
+        /// Used by the AnarchyMiddleware to check if an AnarchyActionFactory can handle a request at a given path based on
+        /// the TargetPattern and enabled state.
+        /// </summary>
+        /// <param name="requestUrl">The URL to evaluate against the TargetPattern</param>
+        /// <returns>true if the AnarchyActionFactory can handle the request and false if it cannot.</returns>
+        bool CanHandleRequest(string requestUrl);
+
+        /// <summary>
         /// Used by the AnarchyMiddleware to trigger per-request action execution.
         /// It is up to the AnarchyActionFactory to decide whether or not to trigger the action based on the url.
         /// </summary>
         /// <param name="requestUrl">The URL to evaluate against the TargetPattern</param>
-        void HandleRequest(string requestUrl);
+        Task HandleRequest(HttpContext requestUrl, RequestDelegate next);
 
         /// <summary>
         /// Start the factory, this will validate the schedule and error if invalid.

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -9,6 +8,7 @@ using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using Just.Anarchy.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Actions
 {
@@ -17,6 +17,7 @@ namespace Just.Anarchy.Actions
         
         public ICauseAnarchy AnarchyAction { get; }
         public bool IsActive { get; private set; }
+        public bool ShouldHandleRequests { get; set; }
         public string TargetPattern => _matchTargetPattern.ToString();
         public Schedule ExecutionSchedule { get; private set; }
 
@@ -36,17 +37,21 @@ namespace Just.Anarchy.Actions
             IsActive = false;
         }
 
-        public void HandleRequest(string requestUrl)
+        public bool CanHandleRequest(string requestUrl) => _matchTargetPattern != null &&
+                                                           _matchTargetPattern.IsMatch(requestUrl);
+
+        public async Task HandleRequest(HttpContext context, RequestDelegate next)
         {
-            if (ShouldHandleRequest(requestUrl))
+            if (CanHandleRequest(context.Request.Path))
             {
                 if (_cancellationTokenSource == null || _cancellationTokenSource.IsCancellationRequested)
                 {
                     _cancellationTokenSource = new CancellationTokenSource();
                 }
 
-                var execution = AnarchyAction.ExecuteAsync(ExecutionSchedule?.IterationDuration, _cancellationTokenSource.Token);
+                var execution = AnarchyAction.HandleRequestAsync(context, next, _cancellationTokenSource.Token);
                 _executionInstances.Add(execution);
+                await execution;
             }
         }
 
@@ -56,7 +61,7 @@ namespace Just.Anarchy.Actions
 
             IsActive = true;
 
-            var task = AnarchyAction
+            var task = ((ICauseScheduledAnarchy)AnarchyAction)
                 .ExecuteAsync(duration, _cancellationTokenSource.Token)
                 .ContinueWith(_ => IsActive = false);
 
@@ -138,10 +143,6 @@ namespace Just.Anarchy.Actions
                 throw new ScheduleRunningException();
             }
         }
-
-        private bool ShouldHandleRequest(string requestUrl) => 
-            _matchTargetPattern != null && 
-            _matchTargetPattern.IsMatch(requestUrl);
 
         private async Task StopUnscheduledExecutions()
         {

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Just.Anarchy.Core.Enums;
 using Just.Anarchy.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Actions
 {
@@ -12,11 +13,8 @@ namespace Just.Anarchy.Actions
         public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.Passive;
         public string Name => nameof(CpuAnarchy);
         public bool Active { get; set; } = false;
-        public TimeSpan DefaultDuration { get; } = TimeSpan.FromMinutes(1);
-        public int StatusCode => 0;
-        public string Body => string.Empty;
 
-        private readonly TimeSpan _defaultDuration = TimeSpan.FromSeconds(10);
+        public TimeSpan DefaultDuration { get; } = TimeSpan.FromMinutes(1);
 
         public Task ExecuteAsync(TimeSpan? duration, CancellationToken cancellationToken)
         {
@@ -48,9 +46,9 @@ namespace Just.Anarchy.Actions
 
         }
 
-        public Task ExecuteScheduledAsync(CancellationToken cancellationToken)
+        public async Task HandleRequestAsync(HttpContext context, RequestDelegate next, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await ExecuteAsync(DefaultDuration, cancellationToken);
         }
     }
 }

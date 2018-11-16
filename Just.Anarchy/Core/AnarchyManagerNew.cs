@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Just.Anarchy.Core.Dtos;
+using Just.Anarchy.Core.Enums;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
+using Just.Anarchy.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Core
 {
@@ -29,6 +32,12 @@ namespace Just.Anarchy.Core
             return factory.AssociateSchedule(schedule);
         }
 
+        public void AssignTargetPattern(string anarchyType, string targetPattern)
+        {
+            var factory = GetFactoryContainingAction(anarchyType);
+            factory.ForTargetPattern(targetPattern);
+        }
+
         public Schedule GetScheduleFromAnarchyActionFactory(string anarchyType)
         {
             return GetFactoryContainingAction(anarchyType)?.ExecutionSchedule;
@@ -37,7 +46,7 @@ namespace Just.Anarchy.Core
         public IEnumerable<NamedScheduleDto> GetAllSchedulesFromFactories()
         {
             return _actionFactories
-                .Where(a => a.AnarchyAction is ICauseScheduledAnarchy)
+                .Where(a => a.AnarchyAction.IsOfType<ICauseScheduledAnarchy>())
                 .Select(s => new NamedScheduleDto(s.AnarchyAction.Name, s.ExecutionSchedule))
                 .OrderBy(n => n.Name);
         }
@@ -46,6 +55,31 @@ namespace Just.Anarchy.Core
         {
             var factory = GetFactoryContainingAction(anarchyType);
             factory.TriggerOnce(duration);
+        }
+
+        public async Task HandleRequest(HttpContext context, RequestDelegate next)
+        {
+            var passiveRequestFactories = _actionFactories.Where(a => a.AnarchyAction.AnarchyType == CauseAnarchyType.Passive &&
+                                                                      a.CanHandleRequest(context.Request.Path));
+
+            var alterResponseFactories = _actionFactories.Where(a => a.AnarchyAction.AnarchyType == CauseAnarchyType.AlterResponse &&
+                                                                     a.CanHandleRequest(context.Request.Path))
+                                                         .ToList();
+
+            // if we have >1 factory that alters the response, throw an exception and don't run anything, there's an error with config.
+            if (alterResponseFactories.Count() > 1)
+            {
+                throw new MultipleResponseAlteringActionsEnabledException(alterResponseFactories.Select(a => a.AnarchyAction.Name));
+            }
+
+            // Run all passive request factories in parallel without awaiting
+            passiveRequestFactories.Select(p => p.HandleRequest(context, next)).ToList();
+
+            //Run the response altering requests (if any)
+            if (alterResponseFactories.Any())
+            {
+                await alterResponseFactories[0].HandleRequest(context, next);
+            }
         }
 
         private IAnarchyActionFactory GetFactoryContainingAction(string anarchyType)

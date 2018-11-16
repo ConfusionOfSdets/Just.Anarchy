@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Just.Anarchy.Core.Dtos;
+using Just.Anarchy.Core.Enums;
 using Just.Anarchy.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Core.Interfaces
 {
@@ -21,6 +24,14 @@ namespace Just.Anarchy.Core.Interfaces
         bool AssignScheduleToAnarchyActionFactory(string anarchyType, Schedule schedule, bool allowUpdate);
 
         /// <summary>
+        /// Assigns the specified anarchy action to an anarchyActionFactory
+        /// </summary>
+        /// <param name="anarchyType">The type of the AnarchyAction to apply the schedule to</param>
+        /// <param name="targetPattern">The target pattern to match against the request url</param>
+        /// <exception cref="AnarchyActionNotFoundException">This exception is thrown if the anarchy action factory cannot be found</exception>
+        void AssignTargetPattern(string anarchyType, string targetPattern);
+
+        /// <summary>
         /// Retrieves any schedule assigned from the  anarchy action factory containing the specified action
         /// </summary>
         /// <param name="anarchyType">The type of the AnarchyAction contained within the factory that contains the schedule.</param>
@@ -33,6 +44,15 @@ namespace Just.Anarchy.Core.Interfaces
         /// </summary>
         /// <returns>A list of NamedScheduleDto for all schedulable AnarchyAction factories.</returns>
         IEnumerable<NamedScheduleDto> GetAllSchedulesFromFactories();
+
+        /// <summary>
+        /// Handle any requests via any action factories that are set to handle requests.
+        /// </summary>
+        /// <para>If the handling action is of CauseAnarchyType.Passive it will then run the next RequestDelegate.</para>
+        /// <para>If the handling action is of type CauseAnarchyType.AlterResponse it will write a response and finish.</para>
+        /// <param name="context">The current httpContext</param>
+        /// <param name="next">The next requestDelegate</param>
+        Task HandleRequest(HttpContext context, RequestDelegate next);
 
         /// <summary>
         /// Triggers a schedulable anarchy action immediately.
