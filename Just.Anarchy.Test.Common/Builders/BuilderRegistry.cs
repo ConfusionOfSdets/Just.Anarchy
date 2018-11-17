@@ -8,6 +8,7 @@ namespace Just.Anarchy.Test.Common.Builders
     public class BuilderRegistry
     {
         public MockAnarchyActionBuilder MockAnarchyAction { get; } = new MockAnarchyActionBuilder();
+        public MockHttpContextBuilder MockHttpContext { get; } = new MockHttpContextBuilder();
         public MockAnarchyActionFactoryBuilder MockAnarchyActionFactory { get; } = new MockAnarchyActionFactoryBuilder();
         public MockAnarchyActionFactoriesBuilder MockAnarchyActionFactories { get; } = new MockAnarchyActionFactoriesBuilder();
         public ScheduleBuilder Schedule { get; } = new ScheduleBuilder();

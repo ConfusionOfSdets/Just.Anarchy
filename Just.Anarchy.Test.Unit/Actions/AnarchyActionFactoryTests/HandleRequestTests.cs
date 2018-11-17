@@ -1,11 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Just.Anarchy.Actions;
 using Just.Anarchy.Core.Interfaces;
-using Just.Anarchy.Test.Common.Builders.CustomBuilders;
+using Just.Anarchy.Test.Common.Builders;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -20,7 +18,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
             var timer = Substitute.For<IHandleTime>();
-            var context = new FakeHttpContextBuilder().WithPath("/jim").Build();
+            var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/jim").Build();
             var next = Substitute.For<RequestDelegate>();
             var sut = new AnarchyActionFactory(action, timer);
             sut.ForTargetPattern("/bob$");
@@ -38,7 +36,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
             var timer = Substitute.For<IHandleTime>();
-            var context = new FakeHttpContextBuilder().WithPath("/bob").Build();
+            var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/bob").Build();
             var next = Substitute.For<RequestDelegate>();
             var sut = new AnarchyActionFactory(action, timer);
             sut.ForTargetPattern("/bob$");
@@ -59,7 +57,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
             var timer = Substitute.For<IHandleTime>();
-            var context = new FakeHttpContextBuilder().WithPath(url).Build();
+            var context = Get.CustomBuilderFor.MockHttpContext.WithPath(url).Build();
             var next = Substitute.For<RequestDelegate>();
             var sut = new AnarchyActionFactory(action, timer);
             sut.ForTargetPattern(null);

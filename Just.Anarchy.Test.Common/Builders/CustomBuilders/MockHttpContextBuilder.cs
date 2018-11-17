@@ -3,13 +3,11 @@ using NSubstitute;
 
 namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
 {
-    //TODO: Add this to the Get.CustomBuilderFor.MockHttpContext
-
-    public class FakeHttpContextBuilder
+    public class MockHttpContextBuilder
     {
         private string _requestPath = "/";
 
-        public FakeHttpContextBuilder WithPath(string requestPath)
+        public MockHttpContextBuilder WithPath(string requestPath)
         {
             _requestPath = requestPath;
             return this;

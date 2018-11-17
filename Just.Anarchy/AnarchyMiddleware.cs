@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Just.Anarchy.Core.Enums;
 using Just.Anarchy.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 
@@ -26,7 +25,7 @@ namespace Just.Anarchy
             {
                 if (!path.StartsWith("/anarchy/"))
                 {
-                    bool responseWritten = await _anarchyManager.HandleRequest(context, _next);
+                    var responseWritten = await _anarchyManager.HandleRequest(context, _next);
 
                     if (!responseWritten)
                     {
@@ -43,45 +42,6 @@ namespace Just.Anarchy
             {
                 await _exceptionHandler.HandleAsync(context.Response, e);
             }
-
-            //if (path.Contains("/anarchy/schedule/"))
-            //{
-            //    try
-            //    {
-            //        await _next(context);
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        await _exceptionHandler.HandleAsync(context.Response, e);
-            //    }
-            //}
-            //if(_anarchyManager.GetState() == AnarchyState.Active && !context.Request.Path.Value.Contains("status/anarchy"))
-            //{
-            //    var action = _anarchyManager.ChooseRandomAnarchyActionFactory();
-
-            //    try
-            //    {
-            //        action.HandleRequest(context.Request.Path);
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        await _exceptionHandler.HandleAsync(context.Response, e);
-            //    }
-
-            //    if (action.AnarchyAction.AnarchyType == CauseAnarchyType.Passive)
-            //    {   
-            //        await _next(context);
-            //    }
-            //    else
-            //    {
-            //        context.Response.StatusCode = action.AnarchyAction.StatusCode;
-            //        await context.Response.WriteAsync(action.AnarchyAction.Body);
-            //    }
-            //}
-            //else
-            //{
-            //    await _next(context);
-            //}
         }
     }
 }
