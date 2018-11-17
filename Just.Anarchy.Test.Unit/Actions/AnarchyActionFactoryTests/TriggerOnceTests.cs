@@ -20,7 +20,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
         public void TriggerOnceCallsActionExecuteAsync(int? durationSecs)
         {
             //Arrange
-            var action = Get.CustomBuilderFor.MockAnarchyAction.ThatIsSchedulable().Build();
+            var action = (ICauseScheduledAnarchy)Get.CustomBuilderFor.MockAnarchyAction.ThatIsSchedulable().Build();
             var timer = Substitute.For<IHandleTime>();
             var sut = new AnarchyActionFactory(action, timer);
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;

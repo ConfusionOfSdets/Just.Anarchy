@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Just.Anarchy.Actions;
 using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Test.Common.Builders.CustomBuilders;
+using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -39,27 +42,26 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var sut = new AnarchyActionFactory(action, timer);
             Action forTargetPattern = () => sut.ForTargetPattern(targetPattern);
 
-            //Act
+            //Act/Assert
             forTargetPattern.Should().Throw<ArgumentException>();
-            
-            //Assert
-            action.DidNotReceive().ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>());
         }
 
         [Test]
-        public void ForTargetPatternNullDisablesHandleRequest()
+        public async Task ForTargetPatternNullDisablesHandleRequest()
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
             var timer = Substitute.For<IHandleTime>();
+            var context = new FakeHttpContextBuilder().Build();
+            var next = Substitute.For<RequestDelegate>();
             var sut = new AnarchyActionFactory(action, timer);
             sut.ForTargetPattern(null);
 
             //Act
-            sut.HandleRequest(null);
+            await sut.HandleRequest(context, next);
 
             //Assert
-            action.DidNotReceive().ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>()); ;
+            await action.DidNotReceive().HandleRequestAsync(context, next, Arg.Any<CancellationToken>()); ;
         }
     }
 }

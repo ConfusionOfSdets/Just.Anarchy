@@ -57,7 +57,7 @@ namespace Just.Anarchy.Core
             factory.TriggerOnce(duration);
         }
 
-        public async Task HandleRequest(HttpContext context, RequestDelegate next)
+        public async Task<bool> HandleRequest(HttpContext context, RequestDelegate next)
         {
             var passiveRequestFactories = _actionFactories.Where(a => a.AnarchyAction.AnarchyType == CauseAnarchyType.Passive &&
                                                                       a.CanHandleRequest(context.Request.Path));
@@ -79,7 +79,10 @@ namespace Just.Anarchy.Core
             if (alterResponseFactories.Any())
             {
                 await alterResponseFactories[0].HandleRequest(context, next);
+                return true;
             }
+
+            return false;
         }
 
         private IAnarchyActionFactory GetFactoryContainingAction(string anarchyType)

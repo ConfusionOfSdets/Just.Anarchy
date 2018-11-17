@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Just.Anarchy.Core.Interfaces
 {
-    public interface ICauseScheduledAnarchy
+    public interface ICauseScheduledAnarchy : ICauseAnarchy
     {
         TimeSpan DefaultDuration { get; }
 

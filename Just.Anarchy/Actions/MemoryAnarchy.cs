@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Actions
 {
-    public class MemoryAnarchy : ICauseAnarchy, ICauseScheduledAnarchy
+    public class MemoryAnarchy : ICauseScheduledAnarchy
     {
         public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.Passive;
         public string Name => nameof(MemoryAnarchy);

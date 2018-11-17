@@ -29,11 +29,6 @@ namespace Just.Anarchy.Core.Interfaces
         Schedule ExecutionSchedule { get; }
 
         /// <summary>
-        /// Returns true if the anarchy action will trigger on all requests and false if not.
-        /// </summary>
-        bool ShouldHandleRequests { get; set; }
-
-        /// <summary>
         /// Used by the AnarchyMiddleware to check if an AnarchyActionFactory can handle a request at a given path based on
         /// the TargetPattern and enabled state.
         /// </summary>
@@ -46,7 +41,8 @@ namespace Just.Anarchy.Core.Interfaces
         /// It is up to the AnarchyActionFactory to decide whether or not to trigger the action based on the url.
         /// </summary>
         /// <param name="requestUrl">The URL to evaluate against the TargetPattern</param>
-        Task HandleRequest(HttpContext requestUrl, RequestDelegate next);
+        /// <param name="next">The request delegate to call after performing the action</param>
+        Task HandleRequest(HttpContext context, RequestDelegate next);
 
         /// <summary>
         /// Start the factory, this will validate the schedule and error if invalid.

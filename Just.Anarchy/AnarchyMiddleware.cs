@@ -26,7 +26,12 @@ namespace Just.Anarchy
             {
                 if (!path.StartsWith("/anarchy/"))
                 {
-                    await _anarchyManager.HandleRequest(context, _next);
+                    bool responseWritten = await _anarchyManager.HandleRequest(context, _next);
+
+                    if (!responseWritten)
+                    {
+                        await _next(context);
+                    }
                 }
                 else
                 {

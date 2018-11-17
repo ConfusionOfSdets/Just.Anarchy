@@ -19,7 +19,7 @@ namespace Just.Anarchy.Test.Unit.Core
         {
             //arrange
             var schedule = new Schedule();
-            var action = Substitute.For<ICauseScheduledAnarchy, ICauseAnarchy>();
+            var action = Substitute.For<ICauseScheduledAnarchy>();
             //act
             var sut = new Scheduler(schedule, action, TestTimer.WithoutDelays());
             //assert
@@ -32,8 +32,8 @@ namespace Just.Anarchy.Test.Unit.Core
 
             //arrange
             var schedule = new Schedule().Repeat(1);
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithoutDelays());
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var sut = new Scheduler(schedule, action, TestTimer.WithoutDelays());
 
             //act
             sut.StartSchedule();
@@ -53,8 +53,8 @@ namespace Just.Anarchy.Test.Unit.Core
             var schedule = Get.CustomBuilderFor.Schedule
                 .For(oneMillisecond)
                 .Repeat(1);
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithoutDelays());
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var sut = new Scheduler(schedule, action, TestTimer.WithoutDelays());
 
             //act
             sut.StartSchedule();
@@ -71,8 +71,8 @@ namespace Just.Anarchy.Test.Unit.Core
         {
             //arrange;
             var schedule = Get.CustomBuilderFor.Schedule.Repeat(1);
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithoutDelays());
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var sut = new Scheduler(schedule, action, TestTimer.WithoutDelays());
 
             //act
             sut.StartSchedule();
@@ -91,8 +91,8 @@ namespace Just.Anarchy.Test.Unit.Core
 
             //arrange
             var schedule = new Schedule().Repeat(expRepetitions);
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithoutDelays());
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var sut = new Scheduler(schedule, action, TestTimer.WithoutDelays());
 
             //act
             sut.StartSchedule();
@@ -116,8 +116,8 @@ namespace Just.Anarchy.Test.Unit.Core
                 .FinishAfter(expTotalDuration)
                 .Repeat(3);
 
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithDelays());
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var sut = new Scheduler(schedule, action, TestTimer.WithDelays());
 
             //act
             sut.StartSchedule();
@@ -142,8 +142,8 @@ namespace Just.Anarchy.Test.Unit.Core
                 .FinishAfter(expTotalDuration)
                 .Repeat(0);
 
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithDelays());
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var sut = new Scheduler(schedule, action, TestTimer.WithDelays());
 
             //act
             sut.StartSchedule();
@@ -167,8 +167,8 @@ namespace Just.Anarchy.Test.Unit.Core
                 .FinishAfter(expTotalDuration)
                 .Repeat(2);
 
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithDelays());
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var sut = new Scheduler(schedule, action, TestTimer.WithDelays());
 
             //act
             sut.StartSchedule();
@@ -189,8 +189,8 @@ namespace Just.Anarchy.Test.Unit.Core
                 .FinishAfter(expTotalDuration)
                 .Repeat(0);
 
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithDelays());
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var sut = new Scheduler(schedule, action, TestTimer.WithDelays());
 
             //act
             sut.StartSchedule();
@@ -208,8 +208,8 @@ namespace Just.Anarchy.Test.Unit.Core
                 .WithInterval(TimeSpan.FromSeconds(1))
                 .Repeat(2);
 
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithDelays());
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var sut = new Scheduler(schedule, action, TestTimer.WithDelays());
 
             //act
             sut.StartSchedule();
@@ -230,8 +230,8 @@ namespace Just.Anarchy.Test.Unit.Core
                 .ToStartWithDelay(TimeSpan.FromSeconds(10))
                 .WithoutEnd();
 
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithDelays());
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var sut = new Scheduler(schedule, action, TestTimer.WithDelays());
             sut.StartSchedule();
             
             var monitorTask = Task.Run(async () => await Wait.AndTimeActionAsync(() => !sut.Running, 20));
@@ -253,8 +253,8 @@ namespace Just.Anarchy.Test.Unit.Core
                 .WithInterval(TimeSpan.FromSeconds(10))
                 .WithoutEnd();
 
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithDelays());
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var sut = new Scheduler(schedule, action, TestTimer.WithDelays());
             sut.StartSchedule();
 
             var monitorTask = Task.Run(async () => await Wait.AndTimeActionAsync(() => !sut.Running, 20));
@@ -276,7 +276,7 @@ namespace Just.Anarchy.Test.Unit.Core
                 .WithoutEnd();
             var ctTriggered = false;
 
-            var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
+            var action = Substitute.For<ICauseScheduledAnarchy>();
             action
                 .ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>())
                 .Returns(async r =>
@@ -292,7 +292,7 @@ namespace Just.Anarchy.Test.Unit.Core
                 }
             });
 
-            var sut = new Scheduler(schedule, (ICauseScheduledAnarchy)action, TestTimer.WithoutDelays());
+            var sut = new Scheduler(schedule, action, TestTimer.WithoutDelays());
             sut.StartSchedule();
 
             var monitorTask = Task.Run(async () => await Wait.AndTimeActionAsync(() => !sut.Running, 20));

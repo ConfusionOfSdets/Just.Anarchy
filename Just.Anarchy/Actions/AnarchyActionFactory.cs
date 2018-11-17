@@ -17,7 +17,6 @@ namespace Just.Anarchy.Actions
         
         public ICauseAnarchy AnarchyAction { get; }
         public bool IsActive { get; private set; }
-        public bool ShouldHandleRequests { get; set; }
         public string TargetPattern => _matchTargetPattern.ToString();
         public Schedule ExecutionSchedule { get; private set; }
 
@@ -111,6 +110,7 @@ namespace Just.Anarchy.Actions
             }
             else
             {
+                //TODO: Catch invalid regex when making new regex and moan at user
                 if (string.IsNullOrWhiteSpace(pattern))
                 {
                     throw new ArgumentException("The target pattern needs to be a valid .net regular expression");

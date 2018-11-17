@@ -15,7 +15,6 @@ namespace Just.Anarchy.Core.Interfaces
         /// Execute one execution of the specified AnarchyAction acting upon a given HttpContext
         /// </summary>
         /// <param name="context">The HttpContext containing the request/response loop</param>
-        /// <param name="next">The next delegate to call if the action is passive</param>
         /// <param name="cancellationToken">The cancellation token which if triggered will abort the http request</param>
         Task HandleRequestAsync(HttpContext context, RequestDelegate next, CancellationToken cancellationToken);
     }

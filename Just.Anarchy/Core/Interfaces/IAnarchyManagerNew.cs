@@ -52,7 +52,8 @@ namespace Just.Anarchy.Core.Interfaces
         /// <para>If the handling action is of type CauseAnarchyType.AlterResponse it will write a response and finish.</para>
         /// <param name="context">The current httpContext</param>
         /// <param name="next">The next requestDelegate</param>
-        Task HandleRequest(HttpContext context, RequestDelegate next);
+        /// <returns>True if response has not been manipulated and false if the response has been written.</returns>
+        Task<bool> HandleRequest(HttpContext context, RequestDelegate next);
 
         /// <summary>
         /// Triggers a schedulable anarchy action immediately.
