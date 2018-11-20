@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Exceptions;
 using Just.Anarchy.Requests;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,10 +15,14 @@ namespace Just.Anarchy.Controllers
             _anarchyManager = anarchyManager;
         }
 
-        [HttpPost, Route(Routes.Anarchy.SetOnRequestHandling)]
+        [HttpPost, Route(Routes.Anarchy.SetOrCancelOnRequestHandling)]
         public IActionResult SetActionTargetPattern(string anarchyType, [FromBody]EnableOnRequestHandlingRequest request)
-        { 
-            //TODO: Validate request?
+        {
+            if (request == null)
+            {
+                throw new RequestBodyRequiredException<EnableOnRequestHandlingRequest>();
+            }
+
             _anarchyManager.AssignTargetPattern(anarchyType, request.TargetPattern);
 
             return new OkResult();

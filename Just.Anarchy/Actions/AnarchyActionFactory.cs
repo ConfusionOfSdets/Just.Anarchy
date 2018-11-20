@@ -110,12 +110,19 @@ namespace Just.Anarchy.Actions
             }
             else
             {
-                //TODO: Catch invalid regex when making new regex and moan at user
                 if (string.IsNullOrWhiteSpace(pattern))
                 {
-                    throw new ArgumentException("The target pattern needs to be a valid .net regular expression");
+                    throw new EmptyTargetPatternException();
                 }
-                _matchTargetPattern = new Regex(pattern, RegexOptions.Compiled & RegexOptions.Singleline, TimeSpan.FromSeconds(1));
+
+                try
+                {
+                    _matchTargetPattern = new Regex(pattern, RegexOptions.Compiled & RegexOptions.Singleline, TimeSpan.FromSeconds(1));
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidTargetPatternException(pattern, e);
+                }
             }    
         }
 

@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Test.Common.Builders;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace Just.Anarchy.Test.Unit
 {
@@ -85,5 +86,44 @@ namespace Just.Anarchy.Test.Unit
             await next.DidNotReceive().Invoke(context);
         }
 
+        [Test]
+        public async Task Invoke_HandlesErrorFromManager()
+        {
+            // Arrange
+            var testException = new ArgumentOutOfRangeException("this is a test exception");
+            var anarchyManager = Substitute.For<IAnarchyManagerNew>();
+            anarchyManager
+                .HandleRequest(Arg.Any<HttpContext>(), Arg.Any<RequestDelegate>())
+                .Throws(testException);
+            var exceptionHandler = Substitute.For<IHandleAnarchyExceptions>();
+            var next = Substitute.For<RequestDelegate>();
+            var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/bob").Build();
+            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler);
+
+            // Act
+            await sut.Invoke(context);
+
+            // Assert
+            await exceptionHandler.Received(1).HandleAsync(context.Response, testException);
+        }
+
+        [Test]
+        public async Task Invoke_HandlesErrorFromNextRequestDelegate()
+        {
+            // Arrange
+            var testException = new ApplicationException("this is a test exception");
+            var anarchyManager = Substitute.For<IAnarchyManagerNew>();
+            var exceptionHandler = Substitute.For<IHandleAnarchyExceptions>();
+            var next = Substitute.For<RequestDelegate>();
+            next.Invoke(Arg.Any<HttpContext>()).Throws(testException);
+            var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/anarchy/bob").Build();
+            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler);
+
+            // Act
+            await sut.Invoke(context);
+
+            // Assert
+            await exceptionHandler.Received(1).HandleAsync(context.Response, testException);
+        }
     }
 }

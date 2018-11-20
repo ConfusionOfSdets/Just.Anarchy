@@ -29,6 +29,7 @@ namespace Just.Anarchy.Core.Interfaces
         /// <param name="anarchyType">The type of the AnarchyAction to apply the schedule to</param>
         /// <param name="targetPattern">The target pattern to match against the request url</param>
         /// <exception cref="AnarchyActionNotFoundException">This exception is thrown if the anarchy action factory cannot be found</exception>
+        /// <exception cref="InvalidTargetPatternException">This exception is thrown if the target pattern specified is not a valid .net compatible regex</exception>
         void AssignTargetPattern(string anarchyType, string targetPattern);
 
         /// <summary>

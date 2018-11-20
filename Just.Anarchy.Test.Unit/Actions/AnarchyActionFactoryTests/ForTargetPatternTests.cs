@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Just.Anarchy.Actions;
 using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Exceptions;
 using Just.Anarchy.Test.Common.Builders;
 using Just.Anarchy.Test.Common.Builders.CustomBuilders;
 using Microsoft.AspNetCore.Http;
@@ -44,7 +45,22 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             Action forTargetPattern = () => sut.ForTargetPattern(targetPattern);
 
             //Act/Assert
-            forTargetPattern.Should().Throw<ArgumentException>();
+            forTargetPattern.Should().Throw<EmptyTargetPatternException>();
+        }
+
+        [Test]
+        [TestCase("*")]
+        [TestCase("{-**?%")]
+        public void ForTargetPatternThrowsIfNotValidRegex(string targetPattern)
+        {
+            //Arrange
+            var action = Substitute.For<ICauseAnarchy>();
+            var timer = Substitute.For<IHandleTime>();
+            var sut = new AnarchyActionFactory(action, timer);
+            Action forTargetPattern = () => sut.ForTargetPattern(targetPattern);
+
+            //Act/Assert
+            forTargetPattern.Should().Throw<InvalidTargetPatternException>();
         }
 
         [Test]

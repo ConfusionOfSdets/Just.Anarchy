@@ -77,10 +77,11 @@ namespace Just.Anarchy.Core.Interfaces
 
         /// <summary>
         /// Set a target pattern to match, this is null by default and will be ignored on request.
-        /// '*' means apply to ALL requests
         /// '/bob' means apply to all requests that come on the path '/bob'
+        /// This must be a valid .net compatible regex or null, whitespace ar an empty string will be rejected.
         /// </summary>
-        /// <param name="pattern">The url path pattern to match</param>
+        /// <param name="pattern">The url path regex pattern to match (.net compatible regex or null)</param>
+        /// <exception cref="InvalidTargetPatternException">Thrown if the targetPattern is whitespace or an invalid regex.</exception>
         void ForTargetPattern(string pattern);
     }
 }
