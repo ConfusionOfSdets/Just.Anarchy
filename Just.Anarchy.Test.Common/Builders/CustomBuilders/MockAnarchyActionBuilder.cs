@@ -13,7 +13,8 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
         private bool _schedulable = true;
         private string _name = "testAction";
         private Action<CancellationToken> _execAction;
-        private Action<CancellationToken> _handleRequestAction;
+        private Func<CancellationToken, Task> _handleRequestTask;
+        private CauseAnarchyType _causeAnarchyType = CauseAnarchyType.Passive;
 
         public MockAnarchyActionBuilder()
         {
@@ -44,9 +45,15 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
             return this;
         }
 
-        public MockAnarchyActionBuilder ThatHandlesRequestWithTask(Action<CancellationToken> handleRequestAction)
+        public MockAnarchyActionBuilder ThatHandlesRequestWithTask(Func<CancellationToken, Task> handleRequestTask)
         {
-            _handleRequestAction = handleRequestAction;
+            _handleRequestTask = handleRequestTask;
+            return this;
+        }
+
+        public MockAnarchyActionBuilder WithCauseAnarchyType(CauseAnarchyType causeAnarchyType)
+        {
+            _causeAnarchyType = causeAnarchyType;
             return this;
         }
 
@@ -54,14 +61,14 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
         {
             var action = _schedulable ? BuildSchedulable() : BuildUnschedulable();
             action.Name.Returns(_name);
-            action.AnarchyType.Returns(CauseAnarchyType.Passive);
+            action.AnarchyType.Returns(_causeAnarchyType);
             action.Active.Returns(true);
 
-            if (_handleRequestAction != null)
+            if (_handleRequestTask != null)
             {
                 action
                     .HandleRequestAsync(Arg.Any<HttpContext>(), Arg.Any<RequestDelegate>(), Arg.Any<CancellationToken>())
-                    .Returns(a => Task.Run(() => _handleRequestAction(a.ArgAt<CancellationToken>(1))));
+                    .Returns(a => Task.Run(async () => await _handleRequestTask(a.ArgAt<CancellationToken>(2))));
             }
 
             return action;

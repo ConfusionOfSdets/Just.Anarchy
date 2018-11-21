@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Just.Anarchy.Actions;
 using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 using NSubstitute;
 
 namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
@@ -14,6 +16,7 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
         protected ICauseAnarchy Action;
         protected IHandleTime Timer;
         protected bool IsActive;
+        protected bool CanHandleRequestResult;
 
         public MockAnarchyActionFactoryBuilder()
         {
@@ -46,12 +49,32 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
             return this;
         }
 
+        public MockAnarchyActionFactoryBuilder ThatHasCanHandleResponse(bool canHandleResponse)
+        {
+            CanHandleRequestResult = canHandleResponse;
+            return this;
+        }
+
+        public MockAnarchyActionFactoryBuilder ThatCanHandleRequest()
+        {
+            ThatHasCanHandleResponse(true);
+            return this;
+        }
+
+        public MockAnarchyActionFactoryBuilder ThatCannotHandleRequest()
+        {
+            ThatHasCanHandleResponse(false);
+            return this;
+        }
+
         public IAnarchyActionFactory Build()
         {
             var factory = Substitute.For<IAnarchyActionFactory>();
             factory.ExecutionSchedule.Returns(Schedule);
             factory.AnarchyAction.Returns(Action);
             factory.IsActive.Returns(IsActive);
+            factory.CanHandleRequest(Arg.Any<string>()).Returns(CanHandleRequestResult);
+            factory.HandleRequest(Arg.Any<HttpContext>(), Arg.Any<RequestDelegate>()).Returns(Task.CompletedTask);
 
             return factory;
         }

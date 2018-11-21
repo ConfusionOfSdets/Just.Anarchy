@@ -69,7 +69,7 @@ namespace Just.Anarchy.Core
             // if we have >1 factory that alters the response, throw an exception and don't run anything, there's an error with config.
             if (alterResponseFactories.Count() > 1)
             {
-                throw new MultipleResponseAlteringActionsEnabledException(alterResponseFactories.Select(a => a.AnarchyAction.Name));
+                throw new MultipleResponseAlteringActionsEnabledException(alterResponseFactories.Select(a => a.AnarchyAction.Name).ToList());
             }
 
             // Run all passive request factories in parallel without awaiting

@@ -43,9 +43,9 @@ namespace Just.Anarchy.Actions
         {
             if (CanHandleRequest(context.Request.Path))
             {
-                if (_cancellationTokenSource == null || _cancellationTokenSource.IsCancellationRequested)
+                if (_cancellationTokenSource.IsCancellationRequested)
                 {
-                    _cancellationTokenSource = new CancellationTokenSource();
+                    throw new ActionStoppingException();
                 }
 
                 var execution = AnarchyAction.HandleRequestAsync(context, next, _cancellationTokenSource.Token);
@@ -58,6 +58,11 @@ namespace Just.Anarchy.Actions
         {
             CheckActionIsSchedulable();
 
+            if (_cancellationTokenSource.IsCancellationRequested)
+            {
+                throw new ActionStoppingException();
+            }
+
             IsActive = true;
 
             var task = ((ICauseScheduledAnarchy)AnarchyAction)
@@ -69,7 +74,10 @@ namespace Just.Anarchy.Actions
 
         public void Start()
         {
-            _cancellationTokenSource = new CancellationTokenSource();
+            if (_cancellationTokenSource.IsCancellationRequested)
+            {
+                throw new ActionStoppingException();
+            }
 
             if (ExecutionSchedule != null)
             {
@@ -79,14 +87,18 @@ namespace Just.Anarchy.Actions
             IsActive = true;
         }
 
-        public async void Stop()
+        public async Task Stop()
         {
+            Console.WriteLine("Stop Called");
             _cancellationTokenSource?.Cancel();
-
+            Console.WriteLine("Cancel triggered");
             _scheduler?.StopSchedule();
+            Console.WriteLine("Awaiting unscheduled executions");
             await StopUnscheduledExecutions();
+            Console.WriteLine("Unscheduled executions stopped");
 
             _cancellationTokenSource = new CancellationTokenSource();
+            Console.WriteLine("Token Source Reset");
             IsActive = false;
         }
 

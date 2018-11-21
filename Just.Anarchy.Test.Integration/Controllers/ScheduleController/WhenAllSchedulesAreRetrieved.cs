@@ -34,8 +34,8 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
             };
 
             var factories = Get.CustomBuilderFor.MockAnarchyActionFactories
-                .WithFactoriesWithActionsNamed("testAction1", "testAction2")
-                .WithFactoriesWithSchedules(_schedules)
+                .WithActionsNamed("testAction1", "testAction2")
+                .WithSchedules(_schedules)
                 .Build()
                 .Select(f => f.Build())
                 .ToList();

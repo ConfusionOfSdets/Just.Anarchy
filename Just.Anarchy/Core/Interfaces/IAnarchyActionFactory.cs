@@ -55,7 +55,7 @@ namespace Just.Anarchy.Core.Interfaces
         /// Stop the factory, all current actions will be asked to terminate,
         /// any request actions will continue until complete.
         /// </summary>
-        void Stop();
+        Task Stop();
 
         /// <summary>
         /// Associates a schedule with the action factory - some aspects of this will be ignored if TargetPattern is set.

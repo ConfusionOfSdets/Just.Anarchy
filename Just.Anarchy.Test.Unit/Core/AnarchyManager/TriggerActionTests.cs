@@ -1,4 +1,5 @@
 ﻿using System;
+using System;
 using System.Linq;
 using FluentAssertions;
 using Just.Anarchy.Core;
@@ -70,8 +71,8 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
             var schedule = new Schedule();
 
             var factories = Get.CustomBuilderFor.MockAnarchyActionFactories
-                .WithFactoriesWithActionsNamed(firstActionName, secondActionName)
-                .WithFactoriesWithSchedules(schedule, schedule)
+                .WithActionsNamed(firstActionName, secondActionName)
+                .WithSchedules(schedule, schedule)
                 .Build()
                 .Select(factoryBuilder => factoryBuilder.Build())
                 .ToList();
