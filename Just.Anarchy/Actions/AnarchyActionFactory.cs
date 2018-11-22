@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Actions
 {
-    public class AnarchyActionFactory : IAnarchyActionFactory
+    public class AnarchyActionFactory<TAnarchyAction> : IAnarchyActionFactory where TAnarchyAction : ICauseAnarchy
     {
         
         public ICauseAnarchy AnarchyAction { get; }
@@ -27,10 +27,10 @@ namespace Just.Anarchy.Actions
         private IScheduler _scheduler;
         private readonly IHandleTime _timer;
 
-        public AnarchyActionFactory(ICauseAnarchy anarchyAction, IHandleTime timer)
+        public AnarchyActionFactory(TAnarchyAction action, IHandleTime timer)
         {
             _timer = timer;
-            AnarchyAction = anarchyAction;
+            AnarchyAction = action;
             _executionInstances = new ConcurrentBag<Task>();
             _cancellationTokenSource = new CancellationTokenSource();
             IsActive = false;
@@ -89,16 +89,11 @@ namespace Just.Anarchy.Actions
 
         public async Task Stop()
         {
-            Console.WriteLine("Stop Called");
             _cancellationTokenSource?.Cancel();
-            Console.WriteLine("Cancel triggered");
             _scheduler?.StopSchedule();
-            Console.WriteLine("Awaiting unscheduled executions");
             await StopUnscheduledExecutions();
-            Console.WriteLine("Unscheduled executions stopped");
 
             _cancellationTokenSource = new CancellationTokenSource();
-            Console.WriteLine("Token Source Reset");
             IsActive = false;
         }
 

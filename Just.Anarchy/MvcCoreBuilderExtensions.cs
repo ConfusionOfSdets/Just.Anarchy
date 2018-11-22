@@ -29,10 +29,14 @@ namespace Just.Anarchy
             builder.Services.AddSingleton<IExceptionHandler, InvalidTargetPatternExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, EmptyTargetPatternExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, ActionStoppingExceptionHandler>();
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new DelayAnarchy(), c.GetService<IHandleTime>()));
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new CpuAnarchy(), c.GetService<IHandleTime>()));
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new MemoryAnarchy(), c.GetService<IHandleTime>()));
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new RandomErrorResponseAnarchy(), c.GetService<IHandleTime>()));
+            builder.Services.AddSingleton<DelayAnarchy>();
+            builder.Services.AddSingleton<CpuAnarchy>();
+            builder.Services.AddSingleton<MemoryAnarchy>();
+            builder.Services.AddSingleton<RandomErrorResponseAnarchy>();
+            builder.Services.AddSingleton<IAnarchyActionFactory, AnarchyActionFactory<DelayAnarchy>>();
+            builder.Services.AddSingleton<IAnarchyActionFactory, AnarchyActionFactory<CpuAnarchy>>();
+            builder.Services.AddSingleton<IAnarchyActionFactory, AnarchyActionFactory<MemoryAnarchy>>();
+            builder.Services.AddSingleton<IAnarchyActionFactory, AnarchyActionFactory<RandomErrorResponseAnarchy>>();
             return builder;
         }
 

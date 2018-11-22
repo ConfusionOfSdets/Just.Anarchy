@@ -24,7 +24,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var timer = Substitute.For<IHandleTime>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/jim").Build();
             var next = Substitute.For<RequestDelegate>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
             sut.ForTargetPattern("/bob$");
 
             //Act
@@ -42,7 +42,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var timer = Substitute.For<IHandleTime>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/bob").Build();
             var next = Substitute.For<RequestDelegate>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
             sut.ForTargetPattern("/bob$");
 
             //Act
@@ -63,7 +63,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var timer = Substitute.For<IHandleTime>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath(url).Build();
             var next = Substitute.For<RequestDelegate>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
             sut.ForTargetPattern(null);
 
             //Act
@@ -97,7 +97,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/bob").Build();
             
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
             sut.ForTargetPattern(".*");
 
 #pragma warning disable 4014 // explicitly not awaiting here as we need to set separate tasks running that are blocked to trigger test state

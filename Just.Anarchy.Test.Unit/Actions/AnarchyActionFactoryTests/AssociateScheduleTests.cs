@@ -19,7 +19,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
             var schedule = new Schedule();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
 
             //Act
             sut.AssociateSchedule(schedule);
@@ -35,7 +35,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
             var schedule = new Schedule();
             var timer = Substitute.For<IHandleTime>();
-            var factory = new AnarchyActionFactory(action, timer);
+            var factory = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
             factory.Start();
 
             //Act
@@ -52,7 +52,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var action = Substitute.For<ICauseAnarchy>();
             var schedule = new Schedule();
             var timer = Substitute.For<IHandleTime>();
-            var factory = new AnarchyActionFactory(action, timer);
+            var factory = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
 
             //Act
             Action sutCall = () => factory.AssociateSchedule(schedule);

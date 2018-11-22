@@ -22,7 +22,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
             var targetPattern = ".*";
 
             //Act
@@ -41,7 +41,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
             Action forTargetPattern = () => sut.ForTargetPattern(targetPattern);
 
             //Act/Assert
@@ -56,7 +56,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
             Action forTargetPattern = () => sut.ForTargetPattern(targetPattern);
 
             //Act/Assert
@@ -71,7 +71,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var timer = Substitute.For<IHandleTime>();
             var context = Get.CustomBuilderFor.MockHttpContext.Build();
             var next = Substitute.For<RequestDelegate>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
             sut.ForTargetPattern(null);
 
             //Act

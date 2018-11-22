@@ -22,7 +22,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             //Arrange
             var action = (ICauseScheduledAnarchy)Get.CustomBuilderFor.MockAnarchyAction.ThatIsSchedulable().Build();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
             //Act
@@ -44,7 +44,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
                 .ThatExecutesTask(async ct => await Block.UntilCancelled(cts.Token))
                 .Build();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
 
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
@@ -69,7 +69,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
                 .ThatExecutesTask(ct => triggered = true)
                 .Build();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
 
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
@@ -98,7 +98,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
                 })
                 .Build();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory(action, timer);
+            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
 
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
