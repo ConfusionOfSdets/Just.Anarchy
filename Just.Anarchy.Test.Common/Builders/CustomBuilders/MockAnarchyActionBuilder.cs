@@ -12,7 +12,7 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
     {
         private bool _schedulable = true;
         private string _name = "testAction";
-        private Action<CancellationToken> _execAction;
+        private Func<CancellationToken, Task> _execTask;
         private Func<CancellationToken, Task> _handleRequestTask;
         private CauseAnarchyType _causeAnarchyType = CauseAnarchyType.Passive;
 
@@ -39,9 +39,9 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
             return this;
         }
 
-        public MockAnarchyActionBuilder ThatExecutesTask(Action<CancellationToken> execAction)
+        public MockAnarchyActionBuilder ThatExecutesTask(Func<CancellationToken, Task> execTask)
         {
-            _execAction = execAction;
+            _execTask = execTask;
             return this;
         }
 
@@ -77,11 +77,11 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
         private ICauseAnarchy BuildSchedulable()
         {
             var action = Substitute.For<ICauseScheduledAnarchy>();
-            if (_execAction != null)
+            if (_execTask != null)
             {
                 action
                     .ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>())
-                    .Returns(a => Task.Run(() => _execAction(a.ArgAt<CancellationToken>(1))));
+                    .Returns(a => Task.Run(async () => await _execTask(a.ArgAt<CancellationToken>(1))));
             }
 
             return action;
