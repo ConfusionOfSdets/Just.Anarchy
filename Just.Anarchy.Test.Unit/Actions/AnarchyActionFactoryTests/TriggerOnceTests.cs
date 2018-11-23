@@ -7,7 +7,6 @@ using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using Just.Anarchy.Test.Common.Builders;
 using Just.Anarchy.Test.Common.Utilities;
-using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -120,7 +119,6 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
         {
             //Arrange
             var ctsFromTest = new CancellationTokenSource(TimeSpan.FromSeconds(1));
-            var triggered = false;
             var initialExecution = true;
 
             var action = Get.CustomBuilderFor.MockAnarchyAction

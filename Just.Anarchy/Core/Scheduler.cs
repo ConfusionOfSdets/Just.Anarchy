@@ -17,9 +17,9 @@ namespace Just.Anarchy.Core
 
         public Scheduler(Schedule schedule, ICauseScheduledAnarchy action, IHandleTime timer)
         {
-            this.Schedule = schedule;
-            this._action = action;
-            this._timer = timer;
+            Schedule = schedule;
+            _action = action;
+            _timer = timer;
         }
 
         public void StartSchedule()
