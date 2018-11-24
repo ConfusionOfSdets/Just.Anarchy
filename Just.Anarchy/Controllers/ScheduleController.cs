@@ -18,14 +18,14 @@ namespace Just.Anarchy.Controllers
         [HttpPost, Route(Routes.Schedule.GetSetUpdate)]
         public IActionResult SetSchedule(string anarchyType, [FromBody]Schedule schedule)
         {
-            _anarchyManager.AssignScheduleToAnarchyActionFactory(anarchyType, schedule, false);
+            _anarchyManager.AssignScheduleToActionOrchestrator(anarchyType, schedule, false);
             return new CreatedResult(GetFullUrl(Routes.Schedule.GetSetUpdate.Replace("{anarchyType}", anarchyType)), schedule);
         }
 
         [HttpPut, Route(Routes.Schedule.GetSetUpdate)]
         public IActionResult UpdateSchedule(string anarchyType, [FromBody]Schedule schedule)
         {
-            var scheduleWasCreated = _anarchyManager.AssignScheduleToAnarchyActionFactory(anarchyType, schedule, true);
+            var scheduleWasCreated = _anarchyManager.AssignScheduleToActionOrchestrator(anarchyType, schedule, true);
             return scheduleWasCreated ?
                 (IActionResult) new CreatedResult(GetFullUrl(Routes.Schedule.GetSetUpdate.Replace("{anarchyType}",anarchyType)), schedule) :
                 new OkObjectResult(schedule);
@@ -34,7 +34,7 @@ namespace Just.Anarchy.Controllers
         [HttpGet, Route(Routes.Schedule.GetSetUpdate)]
         public IActionResult GetSchedule(string anarchyType)
         {
-            var schedule = _anarchyManager.GetScheduleFromAnarchyActionFactory(anarchyType);
+            var schedule = _anarchyManager.GetScheduleFromActionOrchestrator(anarchyType);
 
             if (schedule == null)
             {
@@ -47,7 +47,7 @@ namespace Just.Anarchy.Controllers
         [HttpGet, Route(Routes.Schedule.GetAll)]
         public IActionResult GetAllSchedules()
         {
-            var schedules = new EnumerableResultResponse<NamedScheduleDto>(_anarchyManager.GetAllSchedulesFromFactories());
+            var schedules = new EnumerableResultResponse<NamedScheduleDto>(_anarchyManager.GetAllSchedulesFromOrchestrators());
 
             return new OkObjectResult(schedules);
         }

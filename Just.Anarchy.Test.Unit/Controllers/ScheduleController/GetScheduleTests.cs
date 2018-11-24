@@ -20,7 +20,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
             var schedule = It.IsAny<Schedule>();
-            anarchyManager.GetScheduleFromAnarchyActionFactory(Arg.Any<string>()).Returns(schedule);
+            anarchyManager.GetScheduleFromActionOrchestrator(Arg.Any<string>()).Returns(schedule);
             var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
             
             //Act
@@ -36,7 +36,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
         {
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
-            anarchyManager.GetScheduleFromAnarchyActionFactory(Arg.Any<string>()).Returns((Schedule)null);
+            anarchyManager.GetScheduleFromActionOrchestrator(Arg.Any<string>()).Returns((Schedule)null);
             var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
 
             //Act

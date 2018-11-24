@@ -10,7 +10,7 @@ using Just.Anarchy.Test.Common.Utilities;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
+namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
 {
     [TestFixture]
     public class TriggerOnceTests
@@ -23,7 +23,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             //Arrange
             var action = (ICauseScheduledAnarchy)Get.CustomBuilderFor.MockAnarchyAction.ThatIsSchedulable().Build();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
             //Act
@@ -45,7 +45,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
                 .ThatExecutesTask(async ct => await Block.UntilCancelled(cts.Token))
                 .Build();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
 
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
@@ -70,7 +70,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
                 .ThatExecutesTask(async ct => await Task.Run(() => triggered = true))
                 .Build();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
 
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
@@ -99,7 +99,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
                 })
                 .Build();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
 
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
@@ -115,7 +115,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
         [Test]
         [TestCase(null)]
         [TestCase(1)]
-        public void TriggerOnceErrorsWhenActionFactoryIsStopping(int? durationSecs)
+        public void TriggerOnceErrorsWhenActionOrchestratorIsStopping(int? durationSecs)
         {
             //Arrange
             var ctsFromTest = new CancellationTokenSource(TimeSpan.FromSeconds(1));
@@ -123,7 +123,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
 
             var action = Get.CustomBuilderFor.MockAnarchyAction
                 .ThatIsSchedulable()
-                .ThatExecutesTask(async ctFromFactory =>
+                .ThatExecutesTask(async ctFromOrchestrator =>
                     {
                         // the goal of this is to block the action execution on the first call,
                         // this will lead to an active task in _executionInstances that will need cancelling
@@ -137,7 +137,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
 
             var timer = Substitute.For<IHandleTime>();
 
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
 
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 

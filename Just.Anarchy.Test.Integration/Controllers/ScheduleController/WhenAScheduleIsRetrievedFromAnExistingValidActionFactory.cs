@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Just.Anarchy.Controllers;
 using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Test.Common.Builders;
-using Just.Anarchy.Test.Common.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -17,14 +15,14 @@ using NUnit.Framework;
 namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
 {
     [TestFixture]
-    public class WhenAScheduleIsRetrievedFromAnExistingValidActionFactory : BaseIntegrationTest
+    public class WhenAScheduleIsRetrievedFromAnExistingValidActionOrchestrator : BaseIntegrationTest
     {
         private HttpClient _client;
         private HttpResponseMessage _response;
         private string _responsePayload;
         private Schedule _schedule;
         private bool _scheduleRetrieved = false;
-        private IAnarchyActionFactory _mockFactory;
+        private IActionOrchestrator _mockOrchestrator;
 
         public override void Given()
         {
@@ -37,14 +35,14 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
                 TotalDuration = TimeSpan.FromDays(1)
             };
 
-            _mockFactory = Get.MotherFor.MockAnarchyActionFactory
-                .FactoryWithScheduleNamed("testAction")
+            _mockOrchestrator = Get.MotherFor.MockAnarchyActionOrchestrator
+                .OrchestratorWithScheduleNamed("testAction")
                 .WithIsActive(false)
                 .Build();
 
-            _mockFactory.ExecutionSchedule.Returns(_schedule).AndDoes(_ => _scheduleRetrieved = true);
+            _mockOrchestrator.ExecutionSchedule.Returns(_schedule).AndDoes(_ => _scheduleRetrieved = true);
 
-            var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockFactory));
+            var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockOrchestrator));
 
             _client = factory.CreateClient();
         }
@@ -70,7 +68,7 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
         }
 
         [Then]
-        public void ThenTheScheduleWasRetrievedFromTheActionFactory()
+        public void ThenTheScheduleWasRetrievedFromTheActionOrchestrator()
         {
             _scheduleRetrieved.Should().BeTrue();
         }

@@ -19,7 +19,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
             var schedules = new List<NamedScheduleDto>();
 
-            anarchyManager.GetAllSchedulesFromFactories().Returns(schedules);
+            anarchyManager.GetAllSchedulesFromOrchestrators().Returns(schedules);
             var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
             
             //Act

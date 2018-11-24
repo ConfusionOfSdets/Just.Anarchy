@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Actions
 {
-    public class AnarchyActionFactory<TAnarchyAction> : IAnarchyActionFactory where TAnarchyAction : ICauseAnarchy
+    public class ActionOrchestrator<TAnarchyAction> : IActionOrchestrator where TAnarchyAction : ICauseAnarchy
     {
         
         public ICauseAnarchy AnarchyAction { get; }
@@ -27,7 +27,7 @@ namespace Just.Anarchy.Actions
         private IScheduler _scheduler;
         private readonly IHandleTime _timer;
 
-        public AnarchyActionFactory(TAnarchyAction action, IHandleTime timer)
+        public ActionOrchestrator(TAnarchyAction action, IHandleTime timer)
         {
             _timer = timer;
             AnarchyAction = action;

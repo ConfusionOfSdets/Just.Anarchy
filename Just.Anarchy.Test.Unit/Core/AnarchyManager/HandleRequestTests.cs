@@ -19,12 +19,12 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         [Test]
         [TestCase(CauseAnarchyType.Passive)]
         [TestCase(CauseAnarchyType.AlterResponse)]
-        public async Task MatchingFactory(CauseAnarchyType causeAnarchyType)
+        public async Task MatchingOrchestrator(CauseAnarchyType causeAnarchyType)
         {
             //arrange
-            var factory = GetMockFactoryWithAnarchyTypeAndHandlingState(true, causeAnarchyType);
+            var orchestrator = GetMockOrchestratorWithAnarchyTypeAndHandlingState(true, causeAnarchyType);
                 
-            var sut = new AnarchyManagerNew(new [] { factory });
+            var sut = new AnarchyManagerNew(new [] { orchestrator });
 
             var context = Get.CustomBuilderFor.MockHttpContext.Build();
             var next = Substitute.For<RequestDelegate>();
@@ -33,18 +33,18 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
             await sut.HandleRequest(context, next);
 
             //assert
-            await factory.Received(1).HandleRequest(context, next);
+            await orchestrator.Received(1).HandleRequest(context, next);
         }
 
         [Test]
         [TestCase(CauseAnarchyType.Passive)]
         [TestCase(CauseAnarchyType.AlterResponse)]
-        public async Task NoMatchingFactory(CauseAnarchyType causeAnarchyType)
+        public async Task NoMatchingOrchestrator(CauseAnarchyType causeAnarchyType)
         {
             //arrange
-            var factory = GetMockFactoryWithAnarchyTypeAndHandlingState(false, causeAnarchyType);
+            var orchestrator = GetMockOrchestratorWithAnarchyTypeAndHandlingState(false, causeAnarchyType);
 
-            var sut = new AnarchyManagerNew(new[] { factory });
+            var sut = new AnarchyManagerNew(new[] { orchestrator });
 
             var context = Get.CustomBuilderFor.MockHttpContext.Build();
             var next = Substitute.For<RequestDelegate>();
@@ -53,7 +53,7 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
             await sut.HandleRequest(context, next);
 
             //assert
-            await factory.Received(0).HandleRequest(context, next);
+            await orchestrator.Received(0).HandleRequest(context, next);
         }
 
         [Test]
@@ -62,16 +62,16 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         [TestCase(CauseAnarchyType.AlterResponse, null, null)]
         [TestCase(null, CauseAnarchyType.AlterResponse, null)]
         [TestCase(null, CauseAnarchyType.AlterResponse, CauseAnarchyType.Passive)]
-        public async Task CallsAllMatchingFactories(CauseAnarchyType? firstCanHandle, CauseAnarchyType? secondCanHandle, CauseAnarchyType? thirdCanHandle)
+        public async Task CallsAllMatchingOrchestrators(CauseAnarchyType? firstCanHandle, CauseAnarchyType? secondCanHandle, CauseAnarchyType? thirdCanHandle)
         {
             //arrange
             var canHandleStates = new[] {firstCanHandle, secondCanHandle, thirdCanHandle};
 
-            var factories = canHandleStates.Select(state =>
-                GetMockFactoryWithAnarchyTypeAndHandlingState(state != null, state ?? CauseAnarchyType.Passive))
+            var orchestrators = canHandleStates.Select(state =>
+                GetMockOrchestratorWithAnarchyTypeAndHandlingState(state != null, state ?? CauseAnarchyType.Passive))
                 .ToList();
 
-            var sut = new AnarchyManagerNew(factories);
+            var sut = new AnarchyManagerNew(orchestrators);
 
             var context = Get.CustomBuilderFor.MockHttpContext.Build();
             var next = Substitute.For<RequestDelegate>();
@@ -85,30 +85,30 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
                 var shouldHaveHandled = canHandleStates[i] != null;
                 if (shouldHaveHandled)
                 {
-                    await factories[i].Received(1)
+                    await orchestrators[i].Received(1)
                         .HandleRequest(context, next);
                 }
                 else
                 {
-                    await factories[i].DidNotReceive()
+                    await orchestrators[i].DidNotReceive()
                         .HandleRequest(Arg.Any<HttpContext>(), Arg.Any<RequestDelegate>());
                 }
             }
         }
 
         [Test]
-        public void OnlyAllowsASingleHandlingFactoryOfTypeAlterResponse()
+        public void OnlyAllowsASingleHandlingActionOrchestratorOfTypeAlterResponse()
         {
             //arrange
 
-            var factories = new[]
+            var actionOrchestrators = new[]
             {
-                GetMockFactoryWithAnarchyTypeAndHandlingState(true, CauseAnarchyType.AlterResponse),
-                GetMockFactoryWithAnarchyTypeAndHandlingState(true, CauseAnarchyType.Passive),
-                GetMockFactoryWithAnarchyTypeAndHandlingState(true, CauseAnarchyType.AlterResponse)
+                GetMockOrchestratorWithAnarchyTypeAndHandlingState(true, CauseAnarchyType.AlterResponse),
+                GetMockOrchestratorWithAnarchyTypeAndHandlingState(true, CauseAnarchyType.Passive),
+                GetMockOrchestratorWithAnarchyTypeAndHandlingState(true, CauseAnarchyType.AlterResponse)
             };
         
-            var sut = new AnarchyManagerNew(factories);
+            var sut = new AnarchyManagerNew(actionOrchestrators);
 
             var context = Get.CustomBuilderFor.MockHttpContext.Build();
             var next = Substitute.For<RequestDelegate>();
@@ -121,7 +121,7 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         }
 
         [Test]
-        public async Task AlwaysCallsAlterResponseFactoryLast()
+        public async Task AlwaysCallsAlterResponseOrchestratorLast()
         {
             //arrange
             var context = Get.CustomBuilderFor.MockHttpContext.Build();
@@ -130,17 +130,17 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
             DateTime? alterResponseCalledAt = null;
             DateTime? passiveResponseCalledAt = null;
 
-            var passiveFactory = GetMockFactoryWithAnarchyTypeAndHandlingState(true, CauseAnarchyType.Passive);
-                passiveFactory.HandleRequest(context, next)
+            var passiveOrchestrator = GetMockOrchestratorWithAnarchyTypeAndHandlingState(true, CauseAnarchyType.Passive);
+                passiveOrchestrator.HandleRequest(context, next)
                 .Returns(Task.Delay(100))
                 .AndDoes(_ => passiveResponseCalledAt = DateTime.Now);
 
-            var alterResponseFactory = GetMockFactoryWithAnarchyTypeAndHandlingState(true, CauseAnarchyType.AlterResponse);
-            alterResponseFactory.HandleRequest(context, next)
+            var alterResponseOrchestrator = GetMockOrchestratorWithAnarchyTypeAndHandlingState(true, CauseAnarchyType.AlterResponse);
+            alterResponseOrchestrator.HandleRequest(context, next)
                 .Returns(Task.Delay(100))
                 .AndDoes(_ => alterResponseCalledAt = DateTime.Now);
 
-            var sut = new AnarchyManagerNew(new [] { alterResponseFactory, passiveFactory });
+            var sut = new AnarchyManagerNew(new [] { alterResponseOrchestrator, passiveOrchestrator });
 
             //act
             await sut.HandleRequest(context, next);
@@ -149,19 +149,19 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
             alterResponseCalledAt.Value.Should().BeAfter(passiveResponseCalledAt.Value);
         }
 
-        private IAnarchyActionFactory GetMockFactoryWithAnarchyTypeAndHandlingState(bool canHandle, CauseAnarchyType anarchyType)
+        private IActionOrchestrator GetMockOrchestratorWithAnarchyTypeAndHandlingState(bool canHandle, CauseAnarchyType anarchyType)
         {
             var action = Get.CustomBuilderFor
                 .MockAnarchyAction
                 .WithCauseAnarchyType(anarchyType)
                 .Build();
 
-            var factory = Get.CustomBuilderFor
-                .MockAnarchyActionFactory
+            var orchestrator = Get.CustomBuilderFor
+                .MockAnarchyActionOrchestrator
                 .WithAction(action)
                 .ThatHasCanHandleResponse(canHandle);
 
-            return factory.Build();
+            return orchestrator.Build();
         }
     }
 }

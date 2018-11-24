@@ -13,21 +13,21 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         [Test]
         [TestCase("TESTAnarchyType")]
         [TestCase("testAnarchyType")]
-        public void MatchingFactory_ValidNewSchedule(string anarchyType)
+        public void MatchingOrchestrator_ValidNewSchedule(string anarchyType)
         {
             //arrange
             var schedule = new Schedule();
-            var factory = Substitute.For<IAnarchyActionFactory>();
+            var orchestrator = Substitute.For<IActionOrchestrator>();
             var action = Substitute.For<ICauseAnarchy>();
             action.Name.Returns("testAnarchyType");
-            factory.AnarchyAction.Returns(action);
-            var sut = new AnarchyManagerNew(new [] { factory });
+            orchestrator.AnarchyAction.Returns(action);
+            var sut = new AnarchyManagerNew(new [] { orchestrator });
 
             //act
-            sut.AssignScheduleToAnarchyActionFactory(anarchyType, schedule, false);
+            sut.AssignScheduleToActionOrchestrator(anarchyType, schedule, false);
 
             //assert
-            factory.Received(1).AssociateSchedule(schedule);
+            orchestrator.Received(1).AssociateSchedule(schedule);
         }
 
         [Test]
@@ -35,87 +35,87 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         [TestCase("    ")]
         [TestCase("")]
         [TestCase("wontMatch")]
-        public void NoMatchingFactory(string anarchyType)
+        public void NoMatchingOrchestrator(string anarchyType)
         {
             //arrange
             var schedule = new Schedule();
-            var factory = Substitute.For<IAnarchyActionFactory>();
+            var orchestrator = Substitute.For<IActionOrchestrator>();
             var action = Substitute.For<ICauseAnarchy>();
             action.Name.Returns("testAnarchyType");
-            factory.AnarchyAction.Returns(action);
-            var sut = new AnarchyManagerNew(new [] { factory });
+            orchestrator.AnarchyAction.Returns(action);
+            var sut = new AnarchyManagerNew(new [] { orchestrator });
 
             //act
-            var exception = Assert.Catch(() => sut.AssignScheduleToAnarchyActionFactory(anarchyType, schedule, false));
+            var exception = Assert.Catch(() => sut.AssignScheduleToActionOrchestrator(anarchyType, schedule, false));
 
             //assert
             exception.Should().BeOfType<AnarchyActionNotFoundException>();
-            factory.Received(0).AssociateSchedule(Arg.Any<Schedule>());
+            orchestrator.Received(0).AssociateSchedule(Arg.Any<Schedule>());
         }
 
         [Test]
         [TestCase("firstActionName", "secondActionName", 1, 0)]
         [TestCase("secondActionName", "firstActionName", 0, 1)]
         [TestCase("firstActionName", "firstActionName", 1, 0)]
-        public void SelectsFirstMatchingFactory(string firstActionName, string secondActionName, int firstCount, int secondCount)
+        public void SelectsFirstMatchingOrchestrator(string firstActionName, string secondActionName, int firstCount, int secondCount)
         {
             //arrange
             var schedule = new Schedule();
-            var factory1 = Substitute.For<IAnarchyActionFactory>();
-            var factory2 = Substitute.For<IAnarchyActionFactory>();
+            var orchestrator1 = Substitute.For<IActionOrchestrator>();
+            var orchestrator2 = Substitute.For<IActionOrchestrator>();
             var firstAction = Substitute.For<ICauseAnarchy>();
             firstAction.Name.Returns(firstActionName);
             var secondAction = Substitute.For<ICauseAnarchy>();
             secondAction.Name.Returns(secondActionName);
-            factory1.AnarchyAction.Returns(firstAction);
-            factory2.AnarchyAction.Returns(secondAction);
-            var sut = new AnarchyManagerNew(new [] { factory1, factory2 });
+            orchestrator1.AnarchyAction.Returns(firstAction);
+            orchestrator2.AnarchyAction.Returns(secondAction);
+            var sut = new AnarchyManagerNew(new [] { orchestrator1, orchestrator2 });
 
             //act
-            sut.AssignScheduleToAnarchyActionFactory("firstActionName", schedule, false);
+            sut.AssignScheduleToActionOrchestrator("firstActionName", schedule, false);
 
             //assert
-            factory1.Received(firstCount).AssociateSchedule(Arg.Any<Schedule>());
-            factory2.Received(secondCount).AssociateSchedule(Arg.Any<Schedule>());
+            orchestrator1.Received(firstCount).AssociateSchedule(Arg.Any<Schedule>());
+            orchestrator2.Received(secondCount).AssociateSchedule(Arg.Any<Schedule>());
         }
 
         [Test]
-        public void MatchingFactory_ScheduleExists_DoNotAllowUpdate()
+        public void MatchingOrchestrator_ScheduleExists_DoNotAllowUpdate()
         {
             //arrange
-            var factory = Substitute.For<IAnarchyActionFactory>();
+            var orchestrator = Substitute.For<IActionOrchestrator>();
             var action = Substitute.For<ICauseAnarchy>();
             action.Name.Returns("testAnarchyType");
-            factory.ExecutionSchedule.Returns(new Schedule());
-            factory.AnarchyAction.Returns(action);
-            var sut = new AnarchyManagerNew(new [] { factory });
+            orchestrator.ExecutionSchedule.Returns(new Schedule());
+            orchestrator.AnarchyAction.Returns(action);
+            var sut = new AnarchyManagerNew(new [] { orchestrator });
             var schedule = new Schedule();
 
             //act
-            var exception = Assert.Catch(() => sut.AssignScheduleToAnarchyActionFactory("testAnarchyType", new Schedule(), false));
+            var exception = Assert.Catch(() => sut.AssignScheduleToActionOrchestrator("testAnarchyType", new Schedule(), false));
 
             //assert
             exception.Should().BeOfType<ScheduleExistsException>();
-            factory.Received(0).AssociateSchedule(schedule);
+            orchestrator.Received(0).AssociateSchedule(schedule);
         }
 
         [Test]
-        public void MatchingFactory_ScheduleExists_AllowUpdate()
+        public void MatchingOrchestrator_ScheduleExists_AllowUpdate()
         {
             //arrange
-            var factory = Substitute.For<IAnarchyActionFactory>();
+            var orchestrator = Substitute.For<IActionOrchestrator>();
             var action = Substitute.For<ICauseAnarchy>();
             action.Name.Returns("testAnarchyType");
-            factory.ExecutionSchedule.Returns(new Schedule());
-            factory.AnarchyAction.Returns(action);
-            var sut = new AnarchyManagerNew(new[] { factory });
+            orchestrator.ExecutionSchedule.Returns(new Schedule());
+            orchestrator.AnarchyAction.Returns(action);
+            var sut = new AnarchyManagerNew(new[] { orchestrator });
             var schedule = new Schedule();
 
             //act
-            sut.AssignScheduleToAnarchyActionFactory("testAnarchyType", schedule, true);
+            sut.AssignScheduleToActionOrchestrator("testAnarchyType", schedule, true);
 
             //assert
-            factory.Received(1).AssociateSchedule(schedule);
+            orchestrator.Received(1).AssociateSchedule(schedule);
         }
     }
 }

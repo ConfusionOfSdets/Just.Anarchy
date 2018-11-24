@@ -45,8 +45,8 @@ namespace Just.Anarchy.Controllers
         //    return new
         //    {
         //        State=_anarchyManager.GetState().ToString(), 
-        //        ActiveActions=_anarchyManager.GetAllActiveActionFactories().Select(f => f.AnarchyAction),
-        //        InActiveActions=_anarchyManager.GetAllInactiveActionFactories().Select(f => f.AnarchyAction)
+        //        ActiveActions=_anarchyManager.GetAllActiveActionOrchestrators().Select(f => f.AnarchyAction),
+        //        InActiveActions=_anarchyManager.GetAllInactiveActionOrchestrators().Select(f => f.AnarchyAction)
         //    };
         //}
 

@@ -7,7 +7,7 @@ using Just.Anarchy.Exceptions;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
+namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
 {
     [TestFixture]
     public class AssociateScheduleTests
@@ -19,7 +19,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
             var schedule = new Schedule();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
 
             //Act
             sut.AssociateSchedule(schedule);
@@ -35,11 +35,11 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
             var schedule = new Schedule();
             var timer = Substitute.For<IHandleTime>();
-            var factory = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
-            factory.Start();
+            var orchestrator = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            orchestrator.Start();
 
             //Act
-            Action sutCall = () => factory.AssociateSchedule(schedule);
+            Action sutCall = () => orchestrator.AssociateSchedule(schedule);
 
             //Assert
             sutCall.Should().Throw<ScheduleRunningException>();
@@ -52,10 +52,10 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var action = Substitute.For<ICauseAnarchy>();
             var schedule = new Schedule();
             var timer = Substitute.For<IHandleTime>();
-            var factory = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var orchestrator = new ActionOrchestrator<ICauseAnarchy>(action, timer);
 
             //Act
-            Action sutCall = () => factory.AssociateSchedule(schedule);
+            Action sutCall = () => orchestrator.AssociateSchedule(schedule);
 
             //Assert
             sutCall.Should().Throw<UnschedulableActionException>();

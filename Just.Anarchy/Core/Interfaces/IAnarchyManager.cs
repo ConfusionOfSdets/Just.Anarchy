@@ -8,10 +8,10 @@ namespace Just.Anarchy.Core.Interfaces
         AnarchyState GetState();
         void EnableAnarchy();
         void DisableAnarchy();
-        IAnarchyActionFactory ChooseRandomAnarchyActionFactory();
+        IActionOrchestrator ChooseRandomActionOrchestrator();
         void EnableSpecificType(string anarchytype);
         void SetRequestPatternForType(string anarchytype, string requestPattern);
-        List<IAnarchyActionFactory> GetAllActiveActionFactories();
-        List<IAnarchyActionFactory> GetAllInactiveActionFactories();
+        List<IActionOrchestrator> GetAllActiveActionOrchestrators();
+        List<IActionOrchestrator> GetAllInactiveActionOrchestrators();
     }
 }

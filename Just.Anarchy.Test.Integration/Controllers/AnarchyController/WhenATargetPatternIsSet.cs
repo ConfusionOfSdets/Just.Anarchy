@@ -22,16 +22,16 @@ namespace Just.Anarchy.Test.Integration.Controllers.AnarchyController
         private HttpClient _client;
         private HttpResponseMessage _response;
         private EnableOnRequestHandlingRequest _payload;
-        private IAnarchyActionFactory _mockFactory;
+        private IActionOrchestrator _mockOrchestrator;
 
         public override void Given()
         {
-            _mockFactory = Get.MotherFor.MockAnarchyActionFactory
-                .FactoryWithoutScheduleNamed("testAction")
+            _mockOrchestrator = Get.MotherFor.MockAnarchyActionOrchestrator
+                .OrchestratorWithoutScheduleNamed("testAction")
                 .WithIsActive(false)
                 .Build();
 
-            var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockFactory));
+            var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockOrchestrator));
 
             _client = factory.CreateClient();
         }
@@ -55,9 +55,9 @@ namespace Just.Anarchy.Test.Integration.Controllers.AnarchyController
         }
 
         [Then]
-        public void TheActionFactoryHasBeenAskedToSetTheTarget()
+        public void TheActionOrchestratorHasBeenAskedToSetTheTarget()
         {
-            _mockFactory.Received(1).ForTargetPattern(_payload.TargetPattern);
+            _mockOrchestrator.Received(1).ForTargetPattern(_payload.TargetPattern);
         }
     }
 }

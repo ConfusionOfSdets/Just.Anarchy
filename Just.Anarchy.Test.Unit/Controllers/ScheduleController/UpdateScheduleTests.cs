@@ -19,7 +19,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
             anarchyManager
-                .AssignScheduleToAnarchyActionFactory(Arg.Any<string>(), Arg.Any<Schedule>(), Arg.Any<bool>())
+                .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), Arg.Any<bool>())
                 .Returns(true);
             var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
 
@@ -29,7 +29,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             sut.UpdateSchedule(anarchyType, schedule);
 
             //Assert
-            anarchyManager.Received(1).AssignScheduleToAnarchyActionFactory(anarchyType, schedule, Arg.Any<bool>());
+            anarchyManager.Received(1).AssignScheduleToActionOrchestrator(anarchyType, schedule, Arg.Any<bool>());
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
             anarchyManager
-                .AssignScheduleToAnarchyActionFactory(Arg.Any<string>(), Arg.Any<Schedule>(), true)
+                .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), true)
                 .Returns(true);
             var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
 
@@ -57,7 +57,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
             anarchyManager
-                .AssignScheduleToAnarchyActionFactory(Arg.Any<string>(), Arg.Any<Schedule>(), true)
+                .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), true)
                 .Returns(true);
             var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
 
@@ -76,7 +76,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
             anarchyManager
-                .AssignScheduleToAnarchyActionFactory(Arg.Any<string>(), Arg.Any<Schedule>(), true)
+                .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), true)
                 .Returns(false);
             var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
             
@@ -95,7 +95,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
             anarchyManager
-                .AssignScheduleToAnarchyActionFactory(Arg.Any<string>(), Arg.Any<Schedule>(), true)
+                .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), true)
                 .Returns(false);
             var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
             var schedule = It.IsAny<Schedule>();

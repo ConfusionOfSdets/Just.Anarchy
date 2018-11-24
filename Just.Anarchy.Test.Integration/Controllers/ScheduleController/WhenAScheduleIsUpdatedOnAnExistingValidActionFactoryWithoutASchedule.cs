@@ -7,7 +7,6 @@ using Just.Anarchy.Controllers;
 using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Test.Common.Builders;
-using Just.Anarchy.Test.Common.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -17,11 +16,11 @@ using NUnit.Framework;
 namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
 {
     [TestFixture]
-    public class WhenAScheduleIsUpdatedOnAnExistingValidActionFactoryWithoutASchedule : BaseIntegrationTest
+    public class WhenAScheduleIsUpdatedOnAnExistingValidActionOrchestratorWithoutASchedule : BaseIntegrationTest
     {
         private HttpClient _client;
         private HttpResponseMessage _response;
-        private IAnarchyActionFactory _mockFactory;
+        private IActionOrchestrator _mockOrchestrator;
         private Schedule _schedule;
 
         public override void Given()
@@ -29,12 +28,12 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
             var mockAction = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
             mockAction.Name.Returns("testAction");
 
-            _mockFactory = Get.MotherFor.MockAnarchyActionFactory
-                .FactoryWithoutScheduleNamed("testAction")
+            _mockOrchestrator = Get.MotherFor.MockAnarchyActionOrchestrator
+                .OrchestratorWithoutScheduleNamed("testAction")
                 .WithIsActive(false)
                 .Build();
 
-            _mockFactory.AssociateSchedule(Arg.Any<Schedule>()).Returns(true);
+            _mockOrchestrator.AssociateSchedule(Arg.Any<Schedule>()).Returns(true);
 
             _schedule = new Schedule
             {
@@ -45,7 +44,7 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
                 TotalDuration = TimeSpan.FromMinutes(1)
             };
 
-            var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockFactory));
+            var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockOrchestrator));
 
             _client = factory.CreateClient();
         }
@@ -64,9 +63,9 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
         }
 
         [Then]
-        public void AndTheActionFactoryHasAScheduleSet()
+        public void AndTheActionOrchestratorHasAScheduleSet()
         {
-            _mockFactory.Received(1).AssociateSchedule(Arg.Any<Schedule>());
+            _mockOrchestrator.Received(1).AssociateSchedule(Arg.Any<Schedule>());
         }
     }
 }

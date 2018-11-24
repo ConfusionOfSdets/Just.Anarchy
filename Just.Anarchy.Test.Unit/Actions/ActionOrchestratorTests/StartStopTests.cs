@@ -10,7 +10,7 @@ using Just.Anarchy.Test.Common.Utilities;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
+namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
 {
     [TestFixture]
     public class StartStopTests
@@ -21,7 +21,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
 
             //Act
             sut.Start();
@@ -31,7 +31,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
         }
 
         [Test]
-        public void StartErrorsWhenActionFactoryIsStopping()
+        public void StartErrorsWhenActionOrchestratorIsStopping()
         {
             //Arrange
             var ctsFromTest = new CancellationTokenSource(TimeSpan.FromSeconds(1));
@@ -39,7 +39,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
 
             var action = Get.CustomBuilderFor.MockAnarchyAction
                 .ThatIsSchedulable()
-                .ThatExecutesTask(async ctFromFactory =>
+                .ThatExecutesTask(async ctFromOrchestrator =>
                 {
                     // the goal of this is to block the action execution on the first call,
                     // this will lead to an active task in _executionInstances that will need cancelling
@@ -53,7 +53,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
 
             var timer = Substitute.For<IHandleTime>();
 
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
 
 #pragma warning disable 4014 // explicitly not awaiting here as we need to set separate tasks running that are blocked to trigger test state
             sut.TriggerOnce(TimeSpan.FromMinutes(1000)); // block the stop action to ensure we have a token that is cancelled but not replaced
@@ -69,15 +69,15 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
         }
 
         [Test]
-        public void StopSetsIsActive()
+        public async Task StopSetsIsActive()
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
 
             //Act
-            sut.Stop();
+            await sut.Stop();
 
             //Assert
             sut.IsActive.Should().BeFalse();
@@ -88,26 +88,28 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
         {
             //Arrange
             var cts = new CancellationTokenSource();
-            var tokenFromTest = cts.Token;
+            var ctFromTest = cts.Token;
             CancellationToken linkedCancellationToken;
 
             var action = Get.CustomBuilderFor.MockAnarchyAction
                 .ThatIsSchedulable()
-                .ThatExecutesTask(async tokenFromActionFactory =>
+                .ThatExecutesTask(async ctFromOrchestrator =>
                 {
                     linkedCancellationToken = 
-                        CancellationTokenSource.CreateLinkedTokenSource(tokenFromActionFactory, tokenFromTest).Token;
+                        CancellationTokenSource.CreateLinkedTokenSource(ctFromOrchestrator, ctFromTest).Token;
                     await Block.UntilCancelled(linkedCancellationToken);
                 })
                 .Build();
             var timer = Substitute.For<IHandleTime>();
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
             sut.TriggerOnce(null);
 
             //Act
+#pragma warning disable CS4014 // Intentionally not awaiting Stop as we want to check the task triggered
             sut.Stop();
+#pragma warning restore CS4014 // We instead wait until our test state is triggered before asserting
             await Wait.Until(() => linkedCancellationToken.IsCancellationRequested, 1);
-            var stopCancelledTheTask = !tokenFromTest.IsCancellationRequested;
+            var stopCancelledTheTask = !ctFromTest.IsCancellationRequested;
             cts.Cancel();
 
             //Assert

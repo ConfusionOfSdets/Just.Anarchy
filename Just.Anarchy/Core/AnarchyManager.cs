@@ -8,11 +8,11 @@ namespace Just.Anarchy.Core
 {
     public class AnarchyManager : IAnarchyManager
     {
-        private readonly IList<IAnarchyActionFactory> _actionFactories;
+        private readonly IList<IActionOrchestrator> _actionOrchestrators;
 
-        public AnarchyManager(IEnumerable<IAnarchyActionFactory> actionFactories)
+        public AnarchyManager(IEnumerable<IActionOrchestrator> actionOrchestrators)
         {
-            this._actionFactories = actionFactories.ToList();
+            this._actionOrchestrators = actionOrchestrators.ToList();
         }
         private AnarchyState State { get; set; }
 
@@ -24,62 +24,62 @@ namespace Just.Anarchy.Core
         public void EnableAnarchy()
         {
             State = AnarchyState.Active;
-            UpdateAllFactoryStates(true);
+            UpdateAllActionOrchestratorStates(true);
         }
 
         public void DisableAnarchy()
         {
             State = AnarchyState.Disabled;
-            UpdateAllFactoryStates(false);
+            UpdateAllActionOrchestratorStates(false);
         }
 
-        private void UpdateAllFactoryStates(bool active)
+        private void UpdateAllActionOrchestratorStates(bool active)
         {
-            foreach (var actionFactory in _actionFactories)
+            foreach (var actionOrchestrator in _actionOrchestrators)
             {
                 if (active)
                 {
-                    actionFactory.Start();
+                    actionOrchestrator.Start();
                 }
                 else
                 {
-                    actionFactory.Stop();
+                    actionOrchestrator.Stop();
                 }
             }
         }
 
-        public IAnarchyActionFactory ChooseRandomAnarchyActionFactory()
+        public IActionOrchestrator ChooseRandomActionOrchestrator()
         {
             var random = new Random();
-            var activeActions = _actionFactories.Where(x => x.IsActive).ToList();
+            var activeActions = _actionOrchestrators.Where(x => x.IsActive).ToList();
             return activeActions[random.Next(0, activeActions.Count)];
         }
 
         public void EnableSpecificType(string anarchyType)
         {
-            var actionFactory = GetActionFactoryCalled(anarchyType);
-            if (actionFactory == null) return;
-            actionFactory.Start();
+            var actionOrchestrator = GetActionOrchestratorCalled(anarchyType);
+            if (actionOrchestrator == null) return;
+            actionOrchestrator.Start();
             State = AnarchyState.Active;
         }
 
         public void SetRequestPatternForType(string anarchyType, string requestPattern)
         {
-            var actionFactory = GetActionFactoryCalled(anarchyType);
-            actionFactory?.ForTargetPattern(requestPattern);
+            var actionOrchestrator = GetActionOrchestratorCalled(anarchyType);
+            actionOrchestrator?.ForTargetPattern(requestPattern);
         }
 
-        public List<IAnarchyActionFactory> GetAllActiveActionFactories()
+        public List<IActionOrchestrator> GetAllActiveActionOrchestrators()
         {
-            return _actionFactories.Where(x => x.IsActive).ToList();
+            return _actionOrchestrators.Where(x => x.IsActive).ToList();
         }
 
-        public List<IAnarchyActionFactory> GetAllInactiveActionFactories()
+        public List<IActionOrchestrator> GetAllInactiveActionOrchestrators()
         {
-            return _actionFactories.Where(x => !x.IsActive).ToList();
+            return _actionOrchestrators.Where(x => !x.IsActive).ToList();
         }
 
-        private IAnarchyActionFactory GetActionFactoryCalled(string anarchyType) =>
-            _actionFactories.FirstOrDefault(x => x.AnarchyAction.GetType().Name.Contains(anarchyType));
+        private IActionOrchestrator GetActionOrchestratorCalled(string anarchyType) =>
+            _actionOrchestrators.FirstOrDefault(x => x.AnarchyAction.GetType().Name.Contains(anarchyType));
     }
 }

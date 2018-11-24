@@ -15,20 +15,20 @@ using NUnit.Framework;
 namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
 {
     [TestFixture]
-    public class WhenAScheduleIsUpdatedOnAnExistingValidActionFactoryWithASchedule : BaseIntegrationTest
+    public class WhenAScheduleIsUpdatedOnAnExistingValidActionOrchestratorWithASchedule : BaseIntegrationTest
     {
         private HttpClient _client;
         private HttpResponseMessage _response;
-        private IAnarchyActionFactory _mockFactory;
+        private IActionOrchestrator _mockOrchestrator;
 
         public override void Given()
         {
-            _mockFactory = Get.MotherFor.MockAnarchyActionFactory
-                .FactoryWithScheduleNamed("testAction")
+            _mockOrchestrator = Get.MotherFor.MockAnarchyActionOrchestrator
+                .OrchestratorWithScheduleNamed("testAction")
                 .WithIsActive(false)
                 .Build();
 
-            var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockFactory));
+            var factory = new CustomWebApplicationFactory(builder => builder.AddSingleton(_mockOrchestrator));
 
             _client = factory.CreateClient();
         }
@@ -47,9 +47,9 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
         }
 
         [Then]
-        public void TheActionFactoryHasAScheduleSet()
+        public void TheActionOrchestratorHasAScheduleSet()
         {
-            _mockFactory.Received(1).AssociateSchedule(Arg.Any<Schedule>());
+            _mockOrchestrator.Received(1).AssociateSchedule(Arg.Any<Schedule>());
         }
     }
 }

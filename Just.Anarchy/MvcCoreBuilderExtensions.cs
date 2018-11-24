@@ -33,10 +33,10 @@ namespace Just.Anarchy
             builder.Services.AddSingleton<CpuAnarchy>();
             builder.Services.AddSingleton<MemoryAnarchy>();
             builder.Services.AddSingleton<RandomErrorResponseAnarchy>();
-            builder.Services.AddSingleton<IAnarchyActionFactory, AnarchyActionFactory<DelayAnarchy>>();
-            builder.Services.AddSingleton<IAnarchyActionFactory, AnarchyActionFactory<CpuAnarchy>>();
-            builder.Services.AddSingleton<IAnarchyActionFactory, AnarchyActionFactory<MemoryAnarchy>>();
-            builder.Services.AddSingleton<IAnarchyActionFactory, AnarchyActionFactory<RandomErrorResponseAnarchy>>();
+            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<DelayAnarchy>>();
+            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<CpuAnarchy>>();
+            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<MemoryAnarchy>>();
+            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<RandomErrorResponseAnarchy>>();
             return builder;
         }
 

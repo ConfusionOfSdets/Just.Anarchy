@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
+namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
 {
     [TestFixture]
     public class HandleRequestTests
@@ -24,7 +24,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var timer = Substitute.For<IHandleTime>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/jim").Build();
             var next = Substitute.For<RequestDelegate>();
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
             sut.ForTargetPattern("/bob$");
 
             //Act
@@ -42,7 +42,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var timer = Substitute.For<IHandleTime>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/bob").Build();
             var next = Substitute.For<RequestDelegate>();
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
             sut.ForTargetPattern("/bob$");
 
             //Act
@@ -63,7 +63,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var timer = Substitute.For<IHandleTime>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath(url).Build();
             var next = Substitute.For<RequestDelegate>();
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
             sut.ForTargetPattern(null);
 
             //Act
@@ -74,7 +74,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
         }
 
         [Test]
-        public void HandleRequestErrorsWhenActionFactoryIsStopping()
+        public void HandleRequestErrorsWhenActionOrchestratorIsStopping()
         {
             //Arrange
             var ctsFromTest = new CancellationTokenSource(TimeSpan.FromSeconds(1));
@@ -83,7 +83,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             var initialExecution = true;
 
             var action = Get.CustomBuilderFor.MockAnarchyAction
-                .ThatHandlesRequestWithTask(async ctFromFactory =>
+                .ThatHandlesRequestWithTask(async ctFromOrchestrator =>
                 {
                     // the goal of this is to block the action execution on the first call,
                     // this will lead to an active task in _executionInstances that will need cancelling
@@ -97,7 +97,7 @@ namespace Just.Anarchy.Test.Unit.Actions.AnarchyActionFactoryTests
             
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/bob").Build();
             
-            var sut = new AnarchyActionFactory<ICauseAnarchy>(action, timer);
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
             sut.ForTargetPattern(".*");
 
 #pragma warning disable 4014 // explicitly not awaiting here as we need to set separate tasks running that are blocked to trigger test state
