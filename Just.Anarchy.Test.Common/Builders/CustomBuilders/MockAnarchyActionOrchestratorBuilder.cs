@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Just.Anarchy.Core;
+using Just.Anarchy.Core.Enums;
 using Just.Anarchy.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
@@ -13,6 +15,7 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
         protected IHandleTime Timer;
         protected bool IsActive;
         protected bool CanHandleRequestResult;
+        protected Func<HttpContext, RequestDelegate, Task> HandleRequestImplementation;
 
         public MockAnarchyActionOrchestratorBuilder()
         {
@@ -63,6 +66,21 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
             return this;
         }
 
+        public MockAnarchyActionOrchestratorBuilder ThatCanHandleRequestWith(Func<HttpContext, RequestDelegate, Task> handleRequestImplementation)
+        {
+            ThatHasCanHandleResponse(true);
+            HandleRequestImplementation = handleRequestImplementation;
+            return this;
+        }
+
+        
+
+        public MockAnarchyActionOrchestratorBuilder WithActionCauseAnarchyType(CauseAnarchyType anarchyType)
+        {
+            Action.AnarchyType = anarchyType;
+            return this;
+        }
+
         public IActionOrchestrator Build()
         {
             var orchestrator = Substitute.For<IActionOrchestrator>();
@@ -70,7 +88,20 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
             orchestrator.AnarchyAction.Returns(Action);
             orchestrator.IsActive.Returns(IsActive);
             orchestrator.CanHandleRequest(Arg.Any<string>()).Returns(CanHandleRequestResult);
-            orchestrator.HandleRequest(Arg.Any<HttpContext>(), Arg.Any<RequestDelegate>()).Returns(Task.CompletedTask);
+            if (HandleRequestImplementation != null)
+            {
+                orchestrator.HandleRequest(Arg.Any<HttpContext>(), Arg.Any<RequestDelegate>()).Returns(a =>
+                {
+                    var context = a.ArgAt<HttpContext>(0);
+                    var next = a.ArgAt<RequestDelegate>(1);
+                    return HandleRequestImplementation(context, next);
+                });
+            }
+            else
+            {
+                orchestrator.HandleRequest(Arg.Any<HttpContext>(), Arg.Any<RequestDelegate>()).Returns(Task.CompletedTask);
+            }
+            
 
             return orchestrator;
         }
