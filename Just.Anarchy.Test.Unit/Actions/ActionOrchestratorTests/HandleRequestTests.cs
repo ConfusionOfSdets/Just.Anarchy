@@ -21,10 +21,10 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
-            var timer = Substitute.For<IHandleTime>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/jim").Build();
             var next = Substitute.For<RequestDelegate>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
             sut.ForTargetPattern("/bob$");
 
             //Act
@@ -39,10 +39,10 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
-            var timer = Substitute.For<IHandleTime>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/bob").Build();
             var next = Substitute.For<RequestDelegate>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
             sut.ForTargetPattern("/bob$");
 
             //Act
@@ -60,10 +60,10 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
-            var timer = Substitute.For<IHandleTime>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath(url).Build();
             var next = Substitute.For<RequestDelegate>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
             sut.ForTargetPattern(null);
 
             //Act
@@ -78,7 +78,6 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var ctsFromTest = new CancellationTokenSource(TimeSpan.FromSeconds(1));
-            var timer = Substitute.For<IHandleTime>();
             var next = Substitute.For<RequestDelegate>();
             var initialExecution = true;
 
@@ -96,8 +95,9 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
                 .Build();
             
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/bob").Build();
-            
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
             sut.ForTargetPattern(".*");
 
 #pragma warning disable 4014 // explicitly not awaiting here as we need to set separate tasks running that are blocked to trigger test state

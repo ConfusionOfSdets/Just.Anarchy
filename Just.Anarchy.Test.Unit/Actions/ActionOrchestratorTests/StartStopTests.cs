@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Just.Anarchy.Actions;
+using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using Just.Anarchy.Test.Common.Builders;
@@ -20,14 +21,51 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
-            var timer = Substitute.For<IHandleTime>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
 
             //Act
             sut.Start();
 
             //Assert
             sut.IsActive.Should().BeTrue();
+        }
+
+        [Test]
+        public void StartCallsStartScheduleIfScheduleSet()
+        {
+            //Arrange
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var scheduler = Substitute.For<IScheduler>();
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory
+                .CreatesSpecifiedScheduler(scheduler)
+                .Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
+            sut.AssociateSchedule(new Schedule());
+
+            //Act
+            sut.Start();
+
+            //Assert
+            scheduler.Received(1).StartSchedule();
+        }
+
+        [Test]
+        public void StartDoesNotCallStartScheduleIfScheduleIsNotSet()
+        {
+            //Arrange
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var scheduler = Substitute.For<IScheduler>();
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory
+                .CreatesSpecifiedScheduler(scheduler)
+                .Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
+
+            //Act
+            sut.Start();
+
+            //Assert
+            scheduler.DidNotReceive().StartSchedule();
         }
 
         [Test]
@@ -51,9 +89,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
                 })
                 .Build();
 
-            var timer = Substitute.For<IHandleTime>();
-
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
 
 #pragma warning disable 4014 // explicitly not awaiting here as we need to set separate tasks running that are blocked to trigger test state
             sut.TriggerOnce(TimeSpan.FromMinutes(1000)); // block the stop action to ensure we have a token that is cancelled but not replaced
@@ -73,14 +110,35 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
-            var timer = Substitute.For<IHandleTime>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
 
             //Act
             await sut.Stop();
 
             //Assert
             sut.IsActive.Should().BeFalse();
+        }
+
+
+        [Test]
+        public async Task StopCallsStopSchedule()
+        {
+            //Arrange
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            var scheduler = Substitute.For<IScheduler>();
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory
+                .CreatesSpecifiedScheduler(scheduler)
+                .Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
+            sut.AssociateSchedule(new Schedule());
+            sut.Start();
+
+            //Act
+            await sut.Stop();
+
+            //Assert
+            scheduler.Received(1).StopSchedule();
         }
 
         [Test]
@@ -100,8 +158,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
                     await Block.UntilCancelled(linkedCancellationToken);
                 })
                 .Build();
-            var timer = Substitute.For<IHandleTime>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
             sut.TriggerOnce(null);
 
             //Act

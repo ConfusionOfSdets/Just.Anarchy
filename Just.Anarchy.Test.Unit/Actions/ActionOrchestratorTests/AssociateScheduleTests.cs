@@ -4,6 +4,7 @@ using Just.Anarchy.Actions;
 using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
+using Just.Anarchy.Test.Common.Builders;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -17,9 +18,10 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
             var schedule = new Schedule();
-            var timer = Substitute.For<IHandleTime>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
 
             //Act
             sut.AssociateSchedule(schedule);
@@ -34,8 +36,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
             //Arrange
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
             var schedule = new Schedule();
-            var timer = Substitute.For<IHandleTime>();
-            var orchestrator = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var orchestrator = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
             orchestrator.Start();
 
             //Act
@@ -51,8 +53,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
             var schedule = new Schedule();
-            var timer = Substitute.For<IHandleTime>();
-            var orchestrator = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var orchestrator = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
 
             //Act
             Action sutCall = () => orchestrator.AssociateSchedule(schedule);

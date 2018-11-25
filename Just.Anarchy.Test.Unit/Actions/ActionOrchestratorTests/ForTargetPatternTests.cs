@@ -20,8 +20,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
-            var timer = Substitute.For<IHandleTime>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
             var targetPattern = ".*";
 
             //Act
@@ -39,8 +39,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
-            var timer = Substitute.For<IHandleTime>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
             Action forTargetPattern = () => sut.ForTargetPattern(targetPattern);
 
             //Act/Assert
@@ -54,8 +54,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
-            var timer = Substitute.For<IHandleTime>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
             Action forTargetPattern = () => sut.ForTargetPattern(targetPattern);
 
             //Act/Assert
@@ -67,10 +67,10 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy>();
-            var timer = Substitute.For<IHandleTime>();
             var context = Get.CustomBuilderFor.MockHttpContext.Build();
             var next = Substitute.For<RequestDelegate>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
             sut.ForTargetPattern(null);
 
             //Act

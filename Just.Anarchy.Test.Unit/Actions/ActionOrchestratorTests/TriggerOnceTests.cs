@@ -22,8 +22,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
         {
             //Arrange
             var action = (ICauseScheduledAnarchy)Get.CustomBuilderFor.MockAnarchyAction.ThatIsSchedulable().Build();
-            var timer = Substitute.For<IHandleTime>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
             //Act
@@ -44,8 +44,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
                 .ThatIsSchedulable()
                 .ThatExecutesTask(async ct => await Block.UntilCancelled(cts.Token))
                 .Build();
-            var timer = Substitute.For<IHandleTime>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
 
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
@@ -69,8 +69,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
                 .ThatIsSchedulable()
                 .ThatExecutesTask(async ct => await Task.Run(() => triggered = true))
                 .Build();
-            var timer = Substitute.For<IHandleTime>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
 
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
@@ -98,8 +98,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
                     throw new Exception("this shouldn't affect things");
                 })
                 .Build();
-            var timer = Substitute.For<IHandleTime>();
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
 
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 
@@ -135,9 +135,8 @@ namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
                     })
                 .Build();
 
-            var timer = Substitute.For<IHandleTime>();
-
-            var sut = new ActionOrchestrator<ICauseAnarchy>(action, timer);
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
 
             var duration = durationSecs.HasValue ? TimeSpan.FromSeconds(durationSecs.Value) : (TimeSpan?)null;
 

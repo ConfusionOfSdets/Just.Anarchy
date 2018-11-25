@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Just.Anarchy.Core.Interfaces;
-
-namespace Just.Anarchy.Test.Common.Builders
+﻿namespace Just.Anarchy.Test.Common.Builders
 {
     public class Get
     {

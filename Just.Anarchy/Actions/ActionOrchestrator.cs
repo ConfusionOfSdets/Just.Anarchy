@@ -25,11 +25,11 @@ namespace Just.Anarchy.Actions
         
         private Regex _matchTargetPattern;
         private IScheduler _scheduler;
-        private readonly IHandleTime _timer;
+        private readonly ISchedulerFactory _schedulerFactory;
 
-        public ActionOrchestrator(TAnarchyAction action, IHandleTime timer)
+        public ActionOrchestrator(TAnarchyAction action, ISchedulerFactory schedulerFactory)
         {
-            _timer = timer;
+            _schedulerFactory = schedulerFactory;
             AnarchyAction = action;
             _executionInstances = new ConcurrentBag<Task>();
             _cancellationTokenSource = new CancellationTokenSource();
@@ -137,7 +137,7 @@ namespace Just.Anarchy.Actions
         {
             if (AnarchyAction is ICauseScheduledAnarchy scheduledAction)
             {
-                _scheduler = new Scheduler(ExecutionSchedule, scheduledAction, _timer);
+                _scheduler = _schedulerFactory.CreateSchedulerForAction(ExecutionSchedule, scheduledAction);
                 _scheduler.StartSchedule();
             }
         }

@@ -9,5 +9,6 @@ namespace Just.Anarchy.Test.Common.Builders
         public MockAnarchyActionOrchestratorBuilder MockAnarchyActionOrchestrator => new MockAnarchyActionOrchestratorBuilder();
         public MockAnarchyActionOrchestratorsBuilder MockAnarchyActionOrchestrators => new MockAnarchyActionOrchestratorsBuilder();
         public ScheduleBuilder Schedule => new ScheduleBuilder();
+        public MockSchedulerFactoryBuilder MockSchedulerFactory => new MockSchedulerFactoryBuilder();
     }
 }
