@@ -22,7 +22,7 @@ namespace Just.Anarchy.Test.Integration.Middleware.WhenNonAnarchyRouteIsRequeste
         {
             _mockOrchestrator = Get.MotherFor.MockAnarchyActionOrchestrator
                 .OrchestratorWithoutScheduleNamed("goingtodonothing")
-                .WithActionCauseAnarchyType(CauseAnarchyType.Passive)
+                .WithAction(Get.CustomBuilderFor.MockAnarchyAction.WithCauseAnarchyType(CauseAnarchyType.Passive).Build())
                 .ThatCanHandleRequest()
                 .Build();
 

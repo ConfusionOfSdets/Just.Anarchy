@@ -62,7 +62,6 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
             var action = _schedulable ? BuildSchedulable() : BuildUnschedulable();
             action.Name.Returns(_name);
             action.AnarchyType.Returns(_causeAnarchyType);
-            action.Active.Returns(true);
 
             if (_handleRequestTask != null)
             {

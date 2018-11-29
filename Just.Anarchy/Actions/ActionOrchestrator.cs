@@ -9,13 +9,14 @@ using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using Just.Anarchy.Extensions;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace Just.Anarchy.Actions
 {
     public class ActionOrchestrator<TAnarchyAction> : IActionOrchestrator where TAnarchyAction : ICauseAnarchy
     {
         
-        public ICauseAnarchy AnarchyAction { get; }
+        public ICauseAnarchy AnarchyAction { get; private set;  }
         public bool IsActive { get; private set; }
         public string TargetPattern => _matchTargetPattern.ToString();
         public Schedule ExecutionSchedule { get; private set; }
@@ -131,6 +132,21 @@ namespace Just.Anarchy.Actions
                     throw new InvalidTargetPatternException(pattern, e);
                 }
             }    
+        }
+
+        public void UpdateAction(string updatedActionJson)
+        {
+            try
+            {
+                //See what PopulateObject does vs replacement...
+                //JsonConvert.PopulateObject(updatedActionJson, this.AnarchyAction);
+                var updatedObject = JsonConvert.DeserializeObject<TAnarchyAction>(updatedActionJson);
+                this.AnarchyAction = updatedObject;
+            }
+            catch (JsonReaderException e)
+            {
+                throw new InvalidActionPayloadException(this.AnarchyAction.GetType(), e);
+            }
         }
 
         private void StartSchedule()

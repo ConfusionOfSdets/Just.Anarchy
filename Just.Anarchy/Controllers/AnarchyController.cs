@@ -1,8 +1,13 @@
 ﻿using System;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using Just.Anarchy.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Just.Anarchy.Controllers
 {
@@ -37,6 +42,20 @@ namespace Just.Anarchy.Controllers
 
             _anarchyManager.TriggerAction(anarchyType, duration);
             return new AcceptedResult();
+        }
+
+        [HttpPost, Route(Routes.Anarchy.UpdateAction)]
+        public async Task<IActionResult> UpdateAction(string anarchyType)
+        {
+            string updatedAnarchyJson = null;
+
+            using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
+            {
+                updatedAnarchyJson = await reader.ReadToEndAsync();
+            }
+
+            _anarchyManager.UpdateAction(anarchyType, updatedAnarchyJson);
+            return new OkResult();
         }
 
         //[Route("status/anarchy/state")]

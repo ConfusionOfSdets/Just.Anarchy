@@ -48,6 +48,12 @@ namespace Just.Anarchy.Core
         public void TriggerAction(string anarchyType, TimeSpan? duration) =>
             GetOrchestratorContainingAction(anarchyType).TriggerOnce(duration);
 
+        public void UpdateAction(string anarchyType, string updatedPayload)
+        {
+            var orchestrator = GetOrchestratorContainingAction(anarchyType);
+            orchestrator.UpdateAction(updatedPayload);
+        }
+
         public async Task<bool> HandleRequest(HttpContext context, RequestDelegate next)
         {
             var passiveRequestOrchestrators = _actionOrchestrators.Where(a => a.AnarchyAction.AnarchyType == CauseAnarchyType.Passive &&

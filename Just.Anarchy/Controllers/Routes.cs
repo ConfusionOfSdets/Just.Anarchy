@@ -12,6 +12,7 @@ namespace Just.Anarchy.Controllers
         {
             public const string Trigger = AnarchyBase + "/{anarchyType}/trigger";
             public const string SetOrCancelOnRequestHandling = AnarchyBase + "/{anarchyType}/onrequest";
+            public const string UpdateAction = AnarchyBase + "/{anarchyType}";
         }
 
         public static class Schedule

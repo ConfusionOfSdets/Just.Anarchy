@@ -73,14 +73,6 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
             return this;
         }
 
-        
-
-        public MockAnarchyActionOrchestratorBuilder WithActionCauseAnarchyType(CauseAnarchyType anarchyType)
-        {
-            Action.AnarchyType = anarchyType;
-            return this;
-        }
-
         public IActionOrchestrator Build()
         {
             var orchestrator = Substitute.For<IActionOrchestrator>();

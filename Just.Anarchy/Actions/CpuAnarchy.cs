@@ -10,9 +10,8 @@ namespace Just.Anarchy.Actions
 {
     public class CpuAnarchy : ICauseScheduledAnarchy
     {
-        public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.Passive;
+        public CauseAnarchyType AnarchyType { get; } = CauseAnarchyType.Passive;
         public string Name => nameof(CpuAnarchy);
-        public bool Active { get; set; } = false;
 
         public TimeSpan DefaultDuration { get; } = TimeSpan.FromMinutes(1);
 

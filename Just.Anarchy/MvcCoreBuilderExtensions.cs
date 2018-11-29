@@ -29,6 +29,7 @@ namespace Just.Anarchy
             builder.Services.AddSingleton<IExceptionHandler, InvalidTargetPatternExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, EmptyTargetPatternExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, ActionStoppingExceptionHandler>();
+            builder.Services.AddSingleton<IExceptionHandler, InvalidActionPayloadExceptionHandler>();
             builder.Services.AddSingleton<ISchedulerFactory, SchedulerFactory>();
             builder.Services.AddSingleton<DelayAnarchy>();
             builder.Services.AddSingleton<CpuAnarchy>();
