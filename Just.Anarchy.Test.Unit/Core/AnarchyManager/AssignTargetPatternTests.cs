@@ -16,7 +16,6 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         public void MatchingOrchestrator(string anarchyType)
         {
             //arrange
-            var schedule = new Schedule();
             var orchestrator = Substitute.For<IActionOrchestrator>();
             var action = Substitute.For<ICauseAnarchy>();
             action.Name.Returns("testAnarchyType");
@@ -38,7 +37,6 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         public void NoMatchingOrchestrator(string anarchyType)
         {
             //arrange
-            var schedule = new Schedule();
             var orchestrator = Substitute.For<IActionOrchestrator>();
             var action = Substitute.For<ICauseAnarchy>();
             action.Name.Returns("testAnarchyType");
@@ -60,7 +58,6 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         public void SelectsFirstMatchingOrchestrator(string firstActionName, string secondActionName, int firstCount, int secondCount)
         {
             //arrange
-            var schedule = new Schedule();
             var orchestrator1 = Substitute.For<IActionOrchestrator>();
             var orchestrator2 = Substitute.For<IActionOrchestrator>();
             var firstAction = Substitute.For<ICauseAnarchy>();
