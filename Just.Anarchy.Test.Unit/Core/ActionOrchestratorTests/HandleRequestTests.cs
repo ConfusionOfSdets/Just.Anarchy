@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Just.Anarchy.Actions;
+using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using Just.Anarchy.Test.Common.Builders;
@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
+namespace Just.Anarchy.Test.Unit.Core.ActionOrchestratorTests
 {
     [TestFixture]
     public class HandleRequestTests
