@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using Just.Anarchy.Extensions;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace Just.Anarchy.Actions
+namespace Just.Anarchy.Core
 {
     public class ActionOrchestrator<TAnarchyAction> : IActionOrchestrator where TAnarchyAction : ICauseAnarchy
     {
@@ -138,10 +137,15 @@ namespace Just.Anarchy.Actions
         {
             try
             {
-                //See what PopulateObject does vs replacement...
-                //JsonConvert.PopulateObject(updatedActionJson, this.AnarchyAction);
-                var updatedObject = JsonConvert.DeserializeObject<TAnarchyAction>(updatedActionJson);
-                this.AnarchyAction = updatedObject;
+                JsonConvert.PopulateObject(
+                    updatedActionJson, 
+                    this.AnarchyAction,
+                    new JsonSerializerSettings {MissingMemberHandling = MissingMemberHandling.Error}
+                );
+            }
+            catch (JsonSerializationException e)
+            {
+                throw new InvalidActionPayloadException(this.AnarchyAction.GetType(), e);
             }
             catch (JsonReaderException e)
             {
