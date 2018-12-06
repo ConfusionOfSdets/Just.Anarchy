@@ -52,6 +52,14 @@ namespace Just.Anarchy.Controllers
             return new OkObjectResult(schedules);
         }
 
+        [HttpPut, Route(Routes.Schedule.Start)]
+        public IActionResult StartSchedule(string anarchyType)
+        {
+            _anarchyManager.StartSchedule(anarchyType);
+
+            return new OkResult();
+        }
+
         private string GetFullUrl(string path) => $"{(this.Request.IsHttps ? "https://" : "http://")}{this.Request.Host}{path}";
     }
 }
