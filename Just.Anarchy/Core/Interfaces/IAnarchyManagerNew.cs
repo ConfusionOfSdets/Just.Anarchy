@@ -73,5 +73,16 @@ namespace Just.Anarchy.Core.Interfaces
         /// <param name="updatedPayload">Json payload containing the updated properties of the anarchy action
         /// (note it is up to the anarchy action to define how this is processed!</param>
         void UpdateAction(string anarchyType, string updatedPayload);
+
+        /// <summary>
+        /// Starts the schedule of an anarchy action orchestrator that contains an anarchy action that is schedulable and has a schedule.
+        /// </summary>
+        /// <param name="anarchyType">The anarchy type to process</param>
+        /// <exception cref="AnarchyActionNotFoundException">This exception is thrown if the action orchestrator cannot be found</exception>
+        /// <exception cref="ActionStoppingException">this exception is triggered if the action orchestrator has already been asked to stop</exception>
+        /// <exception cref="ScheduleRunningException">This exception is thrown if the action orchestrator containing the anarchy type is already running a schedule (and so cannot be triggered directly).</exception>
+        /// <exception cref="UnschedulableActionException">This exception is thrown if the anarchy type does not implement ICauseScheduledAnarchy.</exception>
+        /// <exception cref="ScheduleMissingException">This exception is thrown if the anarchy action orchestrator does not have a schedule set.</exception>
+        void StartSchedule(string anarchyType);
     }
 }

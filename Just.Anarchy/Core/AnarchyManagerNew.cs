@@ -81,6 +81,8 @@ namespace Just.Anarchy.Core
             return true;
         }
 
+        public void StartSchedule(string anarchyType) => GetOrchestratorContainingAction(anarchyType).Start();
+
         private IActionOrchestrator GetOrchestratorContainingAction(string anarchyType)
         {
             var actionOrchestrator = _actionOrchestrators.FirstOrDefault(o => o.AnarchyAction.Name.ToLower().Equals(anarchyType?.ToLower()));
