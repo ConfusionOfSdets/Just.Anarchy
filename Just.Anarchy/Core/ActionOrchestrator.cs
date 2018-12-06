@@ -43,10 +43,7 @@ namespace Just.Anarchy.Core
         {
             if (CanHandleRequest(context.Request.Path))
             {
-                if (_cancellationTokenSource.IsCancellationRequested)
-                {
-                    throw new ActionStoppingException();
-                }
+                CheckActionIsNotStopping();
 
                 var execution = AnarchyAction.HandleRequestAsync(context, next, _cancellationTokenSource.Token);
                 _executionInstances.Add(execution);
@@ -57,11 +54,7 @@ namespace Just.Anarchy.Core
         public void TriggerOnce(TimeSpan? duration)
         {
             CheckActionIsSchedulable();
-
-            if (_cancellationTokenSource.IsCancellationRequested)
-            {
-                throw new ActionStoppingException();
-            }
+            CheckActionIsNotStopping();
 
             IsActive = true;
 
@@ -74,15 +67,10 @@ namespace Just.Anarchy.Core
 
         public void Start()
         {
-            if (_cancellationTokenSource.IsCancellationRequested)
-            {
-                throw new ActionStoppingException();
-            }
-
-            if (ExecutionSchedule == null)
-            {
-                throw new ScheduleMissingException();
-            }
+            CheckActionIsNotStopping();
+            CheckActionIsSchedulable();
+            CheckScheduleIsSet();
+            CheckScheduleIsNotRunning();
 
             StartSchedule();
 
@@ -157,11 +145,10 @@ namespace Just.Anarchy.Core
 
         private void StartSchedule()
         {
-            if (AnarchyAction is ICauseScheduledAnarchy scheduledAction)
-            {
-                _scheduler = _schedulerFactory.CreateSchedulerForAction(ExecutionSchedule, scheduledAction);
-                _scheduler.StartSchedule();
-            }
+            CheckActionIsSchedulable();
+
+            _scheduler = _schedulerFactory.CreateSchedulerForAction(ExecutionSchedule, (ICauseScheduledAnarchy)AnarchyAction);
+            _scheduler.StartSchedule();
         }
 
         private void CheckActionIsSchedulable()
@@ -180,7 +167,24 @@ namespace Just.Anarchy.Core
             }
         }
 
-        private async Task StopUnscheduledExecutions()
+        private void CheckScheduleIsSet()
+        {
+            if (ExecutionSchedule == null)
+            {
+                throw new ScheduleMissingException();
+            }
+        }
+
+        private void CheckActionIsNotStopping()
+        {
+            if (_cancellationTokenSource.IsCancellationRequested)
+            {
+                throw new ActionStoppingException();
+            }
+        }
+
+
+    private async Task StopUnscheduledExecutions()
         {
             while (_executionInstances.Any(x => !x.IsCompleted))
             {
