@@ -25,7 +25,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             sut.SetSchedule(anarchyType, schedule);
 
             //Assert
-            anarchyManager.Received(1).AssignScheduleToAnarchyActionFactory(anarchyType, schedule, false);
+            anarchyManager.Received(1).AssignScheduleToActionOrchestrator(anarchyType, schedule, false);
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
             anarchyManager
-                .AssignScheduleToAnarchyActionFactory(Arg.Any<string>(), Arg.Any<Schedule>(), false)
+                .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), false)
                 .Returns(true);
             var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
 
@@ -53,7 +53,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
             anarchyManager
-                .AssignScheduleToAnarchyActionFactory(Arg.Any<string>(), Arg.Any<Schedule>(), false)
+                .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), false)
                 .Returns(true);
             var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
 

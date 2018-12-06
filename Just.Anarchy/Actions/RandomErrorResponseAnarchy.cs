@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Just.Anarchy.Core.Enums;
 using Just.Anarchy.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace Just.Anarchy.Actions
@@ -19,12 +20,12 @@ namespace Just.Anarchy.Actions
 
         public string Body { get; set; }
 
-        public Task ExecuteAsync(TimeSpan? duration, CancellationToken cancellationToken)
+        public async Task HandleRequestAsync(HttpContext context, RequestDelegate next, CancellationToken cancellationToken)
         {
             var random = new Random();
             StatusCode = random.Next(400, 600);
             Body = JsonConvert.SerializeObject(RandomObject(cancellationToken));
-            return Task.FromResult(string.Empty);
+            await context.Response.WriteAsync(Body, cancellationToken);
         }
 
         private static Dictionary<string,object> RandomObject(CancellationToken cancellationToken)
@@ -40,13 +41,12 @@ namespace Just.Anarchy.Actions
                 );
             return obj;
         }
-        public static string RandomString(int length)
+        private static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
-
     }
 }

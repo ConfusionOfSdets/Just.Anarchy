@@ -1,5 +1,7 @@
 ﻿using System;
 using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Exceptions;
+using Just.Anarchy.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Just.Anarchy.Controllers
@@ -13,15 +15,28 @@ namespace Just.Anarchy.Controllers
             _anarchyManager = anarchyManager;
         }
 
+        [HttpPost, Route(Routes.Anarchy.SetOrCancelOnRequestHandling)]
+        public IActionResult SetActionTargetPattern(string anarchyType, [FromBody]EnableOnRequestHandlingRequest request)
+        {
+            if (request == null)
+            {
+                throw new RequestBodyRequiredException<EnableOnRequestHandlingRequest>();
+            }
+
+            _anarchyManager.AssignTargetPattern(anarchyType, request.TargetPattern);
+
+            return new OkResult();
+        }
+
         [HttpPost, Route(Routes.Anarchy.Trigger)]
         public IActionResult TriggerAction(string anarchyType, int? durationSecs)
         {
-           var duration = durationSecs.HasValue ? 
-               TimeSpan.FromSeconds(durationSecs.Value) : 
-               (TimeSpan?)null;
+            var duration = durationSecs.HasValue ?
+                TimeSpan.FromSeconds(durationSecs.Value) :
+                (TimeSpan?)null;
 
-           _anarchyManager.TriggerAction(anarchyType, duration);
-           return new AcceptedResult();
+            _anarchyManager.TriggerAction(anarchyType, duration);
+            return new AcceptedResult();
         }
 
         //[Route("status/anarchy/state")]
@@ -30,8 +45,8 @@ namespace Just.Anarchy.Controllers
         //    return new
         //    {
         //        State=_anarchyManager.GetState().ToString(), 
-        //        ActiveActions=_anarchyManager.GetAllActiveActionFactories().Select(f => f.AnarchyAction),
-        //        InActiveActions=_anarchyManager.GetAllInactiveActionFactories().Select(f => f.AnarchyAction)
+        //        ActiveActions=_anarchyManager.GetAllActiveActionOrchestrators().Select(f => f.AnarchyAction),
+        //        InActiveActions=_anarchyManager.GetAllInactiveActionOrchestrators().Select(f => f.AnarchyAction)
         //    };
         //}
 

@@ -23,11 +23,21 @@ namespace Just.Anarchy
             builder.Services.AddSingleton<IExceptionHandler, AnarchyActionNotFoundExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, ScheduleRunningExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, ScheduleExistsExceptionHandler>();
-            builder.Services.AddSingleton<IExceptionHandler, UnschedulableActionExceptionHandler>(); 
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new DelayAnarchy(), c.GetService<IHandleTime>()));
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new CpuAnarchy(), c.GetService<IHandleTime>()));
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new MemoryAnarchy(), c.GetService<IHandleTime>()));
-            builder.Services.AddTransient<IAnarchyActionFactory>(c => new AnarchyActionFactory(new RandomErrorResponseAnarchy(), c.GetService<IHandleTime>()));
+            builder.Services.AddSingleton<IExceptionHandler, UnschedulableActionExceptionHandler>();
+            builder.Services.AddSingleton<IExceptionHandler, MultipleResponseAlteringActionsEnabledExceptionHandler>();
+            builder.Services.AddSingleton<IExceptionHandler, SetActionTargetPatternRequestBodyRequiredExceptionHandler>();
+            builder.Services.AddSingleton<IExceptionHandler, InvalidTargetPatternExceptionHandler>();
+            builder.Services.AddSingleton<IExceptionHandler, EmptyTargetPatternExceptionHandler>();
+            builder.Services.AddSingleton<IExceptionHandler, ActionStoppingExceptionHandler>();
+            builder.Services.AddSingleton<ISchedulerFactory, SchedulerFactory>();
+            builder.Services.AddSingleton<DelayAnarchy>();
+            builder.Services.AddSingleton<CpuAnarchy>();
+            builder.Services.AddSingleton<MemoryAnarchy>();
+            builder.Services.AddSingleton<RandomErrorResponseAnarchy>();
+            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<DelayAnarchy>>();
+            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<CpuAnarchy>>();
+            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<MemoryAnarchy>>();
+            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<RandomErrorResponseAnarchy>>();
             return builder;
         }
 

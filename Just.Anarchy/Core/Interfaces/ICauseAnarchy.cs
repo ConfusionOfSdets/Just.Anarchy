@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Just.Anarchy.Core.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Core.Interfaces
 {
@@ -10,15 +10,12 @@ namespace Just.Anarchy.Core.Interfaces
         CauseAnarchyType AnarchyType { get; set; }
         string Name { get; }
         bool Active { get; set; }
-        int StatusCode { get; }
-        string Body { get; }
 
         /// <summary>
-        /// Execute one execution of the specified AnarchyAction, if specified the action should limit it's execution duration to the specified duration.
+        /// Execute one execution of the specified AnarchyAction acting upon a given HttpContext
         /// </summary>
-        /// <param name="duration">The amount of time the AnarchyAction will run, if null the AnarchyAction will continue to run until disabled.</param>
-        /// <param name="cancellationToken">If triggered, the action should respect cancellation and stop.</param>
-        /// <returns>Task performing the AnarchyAction</returns>
-        Task ExecuteAsync(TimeSpan? duration, CancellationToken cancellationToken);
+        /// <param name="context">The HttpContext containing the request/response loop</param>
+        /// <param name="cancellationToken">The cancellation token which if triggered will abort the http request</param>
+        Task HandleRequestAsync(HttpContext context, RequestDelegate next, CancellationToken cancellationToken);
     }
 }

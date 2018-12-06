@@ -1,18 +1,15 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Just.Anarchy.Controllers;
 using Just.Anarchy.Core;
 using Just.Anarchy.Core.Dtos;
-using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Responses;
 using Just.Anarchy.Test.Common.Builders;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using NSubstitute;
 using NUnit.Framework;
 
 namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
@@ -33,16 +30,16 @@ namespace Just.Anarchy.Test.Integration.Controllers.ScheduleController
                 Get.CustomBuilderFor.Schedule.WithRandomValues()
             };
 
-            var factories = Get.CustomBuilderFor.MockAnarchyActionFactories
-                .WithFactoriesWithActionsNamed("testAction1", "testAction2")
-                .WithFactoriesWithSchedules(_schedules)
+            var actionOrchestrators = Get.CustomBuilderFor.MockAnarchyActionOrchestrators
+                .WithActionsNamed("testAction1", "testAction2")
+                .WithSchedules(_schedules)
                 .Build()
                 .Select(f => f.Build())
                 .ToList();
 
             var webApplicationFactory = new CustomWebApplicationFactory(builder =>
             {
-                factories.ForEach(f => builder.AddSingleton(f));
+                actionOrchestrators.ForEach(f => builder.AddSingleton(f));
             });
 
             _client = webApplicationFactory.CreateClient();

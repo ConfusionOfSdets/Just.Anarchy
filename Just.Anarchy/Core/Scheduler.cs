@@ -9,7 +9,7 @@ namespace Just.Anarchy.Core
         public Schedule Schedule { get; private set; }
         public bool Running => !(_scheduleTask?.IsCompleted ?? false);
 
-        private readonly ICauseAnarchy _action;
+        private readonly ICauseScheduledAnarchy _action;
         private Task _scheduleTask;
         private CancellationTokenSource _cancellationTokenSource;
         private CancellationToken _cancellationToken;
@@ -17,9 +17,9 @@ namespace Just.Anarchy.Core
 
         public Scheduler(Schedule schedule, ICauseScheduledAnarchy action, IHandleTime timer)
         {
-            this.Schedule = schedule;
-            this._action = (ICauseAnarchy)action;
-            this._timer = timer;
+            Schedule = schedule;
+            _action = action;
+            _timer = timer;
         }
 
         public void StartSchedule()

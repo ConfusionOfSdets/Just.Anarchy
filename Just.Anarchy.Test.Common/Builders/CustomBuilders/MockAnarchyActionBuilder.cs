@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Just.Anarchy.Core.Enums;
 using Just.Anarchy.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 using NSubstitute;
 
 namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
@@ -11,7 +12,9 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
     {
         private bool _schedulable = true;
         private string _name = "testAction";
-        private Action<CancellationToken> _execAction;
+        private Func<CancellationToken, Task> _execTask;
+        private Func<CancellationToken, Task> _handleRequestTask;
+        private CauseAnarchyType _causeAnarchyType = CauseAnarchyType.Passive;
 
         public MockAnarchyActionBuilder()
         {
@@ -36,9 +39,21 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
             return this;
         }
 
-        public MockAnarchyActionBuilder ThatExecutesTask(Action<CancellationToken> execAction)
+        public MockAnarchyActionBuilder ThatExecutesTask(Func<CancellationToken, Task> execTask)
         {
-            _execAction = execAction;
+            _execTask = execTask;
+            return this;
+        }
+
+        public MockAnarchyActionBuilder ThatHandlesRequestWithTask(Func<CancellationToken, Task> handleRequestTask)
+        {
+            _handleRequestTask = handleRequestTask;
+            return this;
+        }
+
+        public MockAnarchyActionBuilder WithCauseAnarchyType(CauseAnarchyType causeAnarchyType)
+        {
+            _causeAnarchyType = causeAnarchyType;
             return this;
         }
 
@@ -46,19 +61,32 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
         {
             var action = _schedulable ? BuildSchedulable() : BuildUnschedulable();
             action.Name.Returns(_name);
-            action.AnarchyType.Returns(CauseAnarchyType.Passive);
+            action.AnarchyType.Returns(_causeAnarchyType);
             action.Active.Returns(true);
-            if (_execAction != null)
+
+            if (_handleRequestTask != null)
             {
                 action
-                    .ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>())
-                    .Returns(a => Task.Run(() => _execAction(a.ArgAt<CancellationToken>(1))));
+                    .HandleRequestAsync(Arg.Any<HttpContext>(), Arg.Any<RequestDelegate>(), Arg.Any<CancellationToken>())
+                    .Returns(a => Task.Run(async () => await _handleRequestTask(a.ArgAt<CancellationToken>(2))));
             }
 
             return action;
         }
 
-        private ICauseAnarchy BuildSchedulable() => Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
+        private ICauseAnarchy BuildSchedulable()
+        {
+            var action = Substitute.For<ICauseScheduledAnarchy>();
+            if (_execTask != null)
+            {
+                action
+                    .ExecuteAsync(Arg.Any<TimeSpan?>(), Arg.Any<CancellationToken>())
+                    .Returns(a => Task.Run(async () => await _execTask(a.ArgAt<CancellationToken>(1))));
+            }
+
+            return action;
+        }
+
         private ICauseAnarchy BuildUnschedulable() => Substitute.For<ICauseAnarchy>();
     }
 }

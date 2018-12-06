@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -9,10 +8,11 @@ using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using Just.Anarchy.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Actions
 {
-    public class AnarchyActionFactory : IAnarchyActionFactory
+    public class ActionOrchestrator<TAnarchyAction> : IActionOrchestrator where TAnarchyAction : ICauseAnarchy
     {
         
         public ICauseAnarchy AnarchyAction { get; }
@@ -25,28 +25,32 @@ namespace Just.Anarchy.Actions
         
         private Regex _matchTargetPattern;
         private IScheduler _scheduler;
-        private readonly IHandleTime _timer;
+        private readonly ISchedulerFactory _schedulerFactory;
 
-        public AnarchyActionFactory(ICauseAnarchy anarchyAction, IHandleTime timer)
+        public ActionOrchestrator(TAnarchyAction action, ISchedulerFactory schedulerFactory)
         {
-            _timer = timer;
-            AnarchyAction = anarchyAction;
+            _schedulerFactory = schedulerFactory;
+            AnarchyAction = action;
             _executionInstances = new ConcurrentBag<Task>();
             _cancellationTokenSource = new CancellationTokenSource();
             IsActive = false;
         }
 
-        public void HandleRequest(string requestUrl)
+        public bool CanHandleRequest(string requestUrl) => _matchTargetPattern != null &&
+                                                           _matchTargetPattern.IsMatch(requestUrl);
+
+        public async Task HandleRequest(HttpContext context, RequestDelegate next)
         {
-            if (ShouldHandleRequest(requestUrl))
+            if (CanHandleRequest(context.Request.Path))
             {
-                if (_cancellationTokenSource == null || _cancellationTokenSource.IsCancellationRequested)
+                if (_cancellationTokenSource.IsCancellationRequested)
                 {
-                    _cancellationTokenSource = new CancellationTokenSource();
+                    throw new ActionStoppingException();
                 }
 
-                var execution = AnarchyAction.ExecuteAsync(ExecutionSchedule?.IterationDuration, _cancellationTokenSource.Token);
+                var execution = AnarchyAction.HandleRequestAsync(context, next, _cancellationTokenSource.Token);
                 _executionInstances.Add(execution);
+                await execution;
             }
         }
 
@@ -54,9 +58,14 @@ namespace Just.Anarchy.Actions
         {
             CheckActionIsSchedulable();
 
+            if (_cancellationTokenSource.IsCancellationRequested)
+            {
+                throw new ActionStoppingException();
+            }
+
             IsActive = true;
 
-            var task = AnarchyAction
+            var task = ((ICauseScheduledAnarchy)AnarchyAction)
                 .ExecuteAsync(duration, _cancellationTokenSource.Token)
                 .ContinueWith(_ => IsActive = false);
 
@@ -65,7 +74,10 @@ namespace Just.Anarchy.Actions
 
         public void Start()
         {
-            _cancellationTokenSource = new CancellationTokenSource();
+            if (_cancellationTokenSource.IsCancellationRequested)
+            {
+                throw new ActionStoppingException();
+            }
 
             if (ExecutionSchedule != null)
             {
@@ -75,10 +87,9 @@ namespace Just.Anarchy.Actions
             IsActive = true;
         }
 
-        public async void Stop()
+        public async Task Stop()
         {
             _cancellationTokenSource?.Cancel();
-
             _scheduler?.StopSchedule();
             await StopUnscheduledExecutions();
 
@@ -108,9 +119,17 @@ namespace Just.Anarchy.Actions
             {
                 if (string.IsNullOrWhiteSpace(pattern))
                 {
-                    throw new ArgumentException("The target pattern needs to be a valid .net regular expression");
+                    throw new EmptyTargetPatternException();
                 }
-                _matchTargetPattern = new Regex(pattern, RegexOptions.Compiled & RegexOptions.Singleline, TimeSpan.FromSeconds(1));
+
+                try
+                {
+                    _matchTargetPattern = new Regex(pattern, RegexOptions.Compiled & RegexOptions.Singleline, TimeSpan.FromSeconds(1));
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidTargetPatternException(pattern, e);
+                }
             }    
         }
 
@@ -118,7 +137,7 @@ namespace Just.Anarchy.Actions
         {
             if (AnarchyAction is ICauseScheduledAnarchy scheduledAction)
             {
-                _scheduler = new Scheduler(ExecutionSchedule, scheduledAction, _timer);
+                _scheduler = _schedulerFactory.CreateSchedulerForAction(ExecutionSchedule, scheduledAction);
                 _scheduler.StartSchedule();
             }
         }
@@ -138,10 +157,6 @@ namespace Just.Anarchy.Actions
                 throw new ScheduleRunningException();
             }
         }
-
-        private bool ShouldHandleRequest(string requestUrl) => 
-            _matchTargetPattern != null && 
-            _matchTargetPattern.IsMatch(requestUrl);
 
         private async Task StopUnscheduledExecutions()
         {

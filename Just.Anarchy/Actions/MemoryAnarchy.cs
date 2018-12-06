@@ -4,22 +4,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using Just.Anarchy.Core.Enums;
 using Just.Anarchy.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Actions
 {
-    public class MemoryAnarchy : ICauseAnarchy, ICauseScheduledAnarchy
+    public class MemoryAnarchy : ICauseScheduledAnarchy
     {
         public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.Passive;
         public string Name => nameof(MemoryAnarchy);
         public bool Active { get; set; } = false;
         public TimeSpan DefaultDuration { get; } = TimeSpan.FromMinutes(1);
-        public int StatusCode => 0;
 
         // TODO: AmountMb needs to be parameterized.
         private const int AmountMb = 1024;
         private const int Megabyte = 1048576;
 
-        public string Body => string.Empty;
         public Task ExecuteAsync(TimeSpan? duration, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
@@ -39,6 +38,11 @@ namespace Just.Anarchy.Actions
                 // Release Memory
                 Marshal.FreeHGlobal(pointer);
             }, cancellationToken);
+        }
+
+        public async Task HandleRequestAsync(HttpContext context, RequestDelegate next, CancellationToken cancellationToken)
+        {
+            await ExecuteAsync(DefaultDuration, cancellationToken);
         }
     }
 }
