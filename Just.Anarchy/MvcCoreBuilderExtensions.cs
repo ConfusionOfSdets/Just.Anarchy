@@ -28,6 +28,7 @@ namespace Just.Anarchy
             builder.Services.AddSingleton<IExceptionHandler, AnarchyActionNotFoundExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, ScheduleRunningExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, ScheduleExistsExceptionHandler>();
+            builder.Services.AddSingleton<IExceptionHandler, ScheduleMissingExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, UnschedulableActionExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, MultipleResponseAlteringActionsEnabledExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, SetActionTargetPatternRequestBodyRequiredExceptionHandler>();

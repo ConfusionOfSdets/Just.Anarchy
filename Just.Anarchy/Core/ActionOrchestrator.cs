@@ -15,7 +15,7 @@ namespace Just.Anarchy.Core
     public class ActionOrchestrator<TAnarchyAction> : IActionOrchestrator where TAnarchyAction : ICauseAnarchy
     {
         
-        public ICauseAnarchy AnarchyAction { get; private set;  }
+        public ICauseAnarchy AnarchyAction { get; }
         public bool IsActive { get; private set; }
         public string TargetPattern => _matchTargetPattern.ToString();
         public Schedule ExecutionSchedule { get; private set; }
@@ -79,10 +79,12 @@ namespace Just.Anarchy.Core
                 throw new ActionStoppingException();
             }
 
-            if (ExecutionSchedule != null)
+            if (ExecutionSchedule == null)
             {
-                StartSchedule();
+                throw new ScheduleMissingException();
             }
+
+            StartSchedule();
 
             IsActive = true;
         }
