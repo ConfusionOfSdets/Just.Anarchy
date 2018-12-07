@@ -33,8 +33,6 @@ namespace Just.Anarchy.Test.Integration.Controllers.AnarchyController
 
         public override async Task WhenAsync()
         {
-            _payload = "testPayload";
-
             _response = await _client.PutAsync(Routes.Anarchy.StopAction.Replace("{anarchyType}", "testAction"), null);
         }
 

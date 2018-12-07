@@ -85,6 +85,8 @@ namespace Just.Anarchy.Core
 
         public void StopAction(string anarchyType) => GetOrchestratorContainingAction(anarchyType).Stop();
 
+        public void StopAllActions() => Parallel.ForEach(_actionOrchestrators, o => o.Stop());
+
         private IActionOrchestrator GetOrchestratorContainingAction(string anarchyType)
         {
             var actionOrchestrator = _actionOrchestrators.FirstOrDefault(o => o.AnarchyAction.Name.ToLower().Equals(anarchyType?.ToLower()));

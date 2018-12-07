@@ -93,5 +93,10 @@ namespace Just.Anarchy.Core.Interfaces
         /// <exception cref="AnarchyActionNotFoundException">This exception is thrown if the action orchestrator cannot be found</exception>
         /// <exception cref="ActionStoppingException">this exception is triggered if the action orchestrator has already been asked to stop</exception>
         void StopAction(string anarchyType);
+
+        /// <summary>
+        /// Stops all actions indiscriminately - this is the fastest way to stop anarchy.
+        /// </summary>
+        void StopAllActions();
     }
 }

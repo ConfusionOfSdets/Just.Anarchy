@@ -67,6 +67,15 @@ namespace Just.Anarchy.Controllers
             return new AcceptedResult();
         }
 
+        [HttpPut, Route(Routes.Anarchy.StopAllActions)]
+        public IActionResult StopAllActions()
+        {
+            _anarchyManager.StopAllActions();
+
+            //TODO: When working return url to Get State of all AnarchyActions here...
+            return new AcceptedResult();
+        }
+
         //[Route("status/anarchy/state")]
         //public object GetState()
         //{
