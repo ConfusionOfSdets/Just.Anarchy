@@ -161,7 +161,7 @@ namespace Just.Anarchy.Core
 
         private void CheckScheduleIsNotRunning()
         {
-            if (IsActive)
+            if (_scheduler != null && _scheduler.Running)
             {
                 throw new ScheduleRunningException();
             }
