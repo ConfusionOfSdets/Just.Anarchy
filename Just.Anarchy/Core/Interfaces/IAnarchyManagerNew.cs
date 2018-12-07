@@ -84,5 +84,14 @@ namespace Just.Anarchy.Core.Interfaces
         /// <exception cref="UnschedulableActionException">This exception is thrown if the anarchy type does not implement ICauseScheduledAnarchy.</exception>
         /// <exception cref="ScheduleMissingException">This exception is thrown if the anarchy action orchestrator does not have a schedule set.</exception>
         void StartSchedule(string anarchyType);
+
+        /// <summary>
+        /// Stops any scheduled action or currently triggered actions within a given action orchestrator.
+        /// NOTE: this can be called against any action orchestrator, as it will kill any in-process action execution (scheduled or not).
+        /// </summary>
+        /// <param name="anarchyType">The anarchy type to process</param>
+        /// <exception cref="AnarchyActionNotFoundException">This exception is thrown if the action orchestrator cannot be found</exception>
+        /// <exception cref="ActionStoppingException">this exception is triggered if the action orchestrator has already been asked to stop</exception>
+        void StopAction(string anarchyType);
     }
 }

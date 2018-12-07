@@ -58,6 +58,15 @@ namespace Just.Anarchy.Controllers
             return new OkResult();
         }
 
+        [HttpPut, Route(Routes.Anarchy.StopAction)]
+        public IActionResult StopAction(string anarchyType)
+        {
+            _anarchyManager.StopAction(anarchyType);
+
+            //TODO: When working return url to Get State of AnarchyAction here...
+            return new AcceptedResult();
+        }
+
         //[Route("status/anarchy/state")]
         //public object GetState()
         //{
@@ -67,28 +76,6 @@ namespace Just.Anarchy.Controllers
         //        ActiveActions=_anarchyManager.GetAllActiveActionOrchestrators().Select(f => f.AnarchyAction),
         //        InActiveActions=_anarchyManager.GetAllInactiveActionOrchestrators().Select(f => f.AnarchyAction)
         //    };
-        //}
-
-        //[Route("status/anarchy/enable")]
-        //public void EnableAnarchy()
-        //{
-        //    _anarchyManager.EnableAnarchy();
-        //}
-
-        //[Route("status/anarchy/disable")]
-        //public void DisableAnarchy()
-        //{
-        //    _anarchyManager.DisableAnarchy();
-        //}
-
-        //[Route("status/anarchy/enable/{anarchytype}")]
-        //public void EnableIndividualAnarchy([FromRoute] string anarchytype, string requestPattern = null)
-        //{
-        //    _anarchyManager.EnableSpecificType(anarchytype);
-        //    if (requestPattern != null)
-        //    {
-        //        _anarchyManager.SetRequestPatternForType(anarchytype, requestPattern);
-        //    }
         //}
     }
 }

@@ -28,7 +28,6 @@ namespace Just.Anarchy.Test.Unit.Core.ActionOrchestratorTests
             sut.IsActive.Should().BeFalse();
         }
 
-
         [Test]
         public async Task StopCallsStopSchedule()
         {
