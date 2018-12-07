@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
-using Just.Anarchy.Exceptions;
 using Just.Anarchy.Test.Common.Builders;
 using Just.Anarchy.Test.Common.Utilities;
 using NSubstitute;
