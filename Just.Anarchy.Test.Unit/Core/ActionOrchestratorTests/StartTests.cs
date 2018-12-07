@@ -98,13 +98,12 @@ namespace Just.Anarchy.Test.Unit.Core.ActionOrchestratorTests
             var sut = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
 
             //Act
-            var exception = Assert.Catch(() => sut.Start());
+            Action sutCall = () => sut.Start();
 
             //Assert
-            exception.Should().BeOfType<ScheduleMissingException>();
+            sutCall.Should().Throw<ScheduleMissingException>();
         }
 
-        // Not Running, NotSchedulable
         [Test]
         public void Start_NotSchedulable_DoesNotSetIsActive()
         {
@@ -156,9 +155,8 @@ namespace Just.Anarchy.Test.Unit.Core.ActionOrchestratorTests
             exception.Should().BeOfType<UnschedulableActionException>();
         }
 
-        // Running, Schedulable
         [Test]
-        public void Start_Running_DoesNotCallStartSchedule()
+        public void Start_ScheduleRunning_DoesNotCallStartSchedule()
         {
             //Arrange
             var action = Substitute.For<ICauseScheduledAnarchy>();
@@ -180,7 +178,7 @@ namespace Just.Anarchy.Test.Unit.Core.ActionOrchestratorTests
         }
 
         [Test]
-        public void Start_Running_Throws()
+        public void Start_ScheduleRunning_Throws()
         {
             //Arrange
             var action = Substitute.For<ICauseScheduledAnarchy>();
@@ -194,10 +192,10 @@ namespace Just.Anarchy.Test.Unit.Core.ActionOrchestratorTests
             scheduler.Running.Returns(true);
 
             //Act
-            var exception = Assert.Catch(() => sut.Start());
+            Action sutCall = () => sut.Start();
 
             //Assert
-            exception.Should().BeOfType<ScheduleRunningException>();
+            sutCall.Should().Throw<ScheduleRunningException>();
         }
 
 

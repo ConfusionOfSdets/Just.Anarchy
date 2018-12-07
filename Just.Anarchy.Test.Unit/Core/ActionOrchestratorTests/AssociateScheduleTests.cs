@@ -30,14 +30,19 @@ namespace Just.Anarchy.Test.Unit.Core.ActionOrchestratorTests
         }
 
         [Test]
-        public void AssociateScheduleCannotSetScheduleWhenActive()
+        public void AssociateScheduleCannotSetScheduleWhenScheduleRunning()
         {
             //Arrange
             var action = Substitute.For<ICauseAnarchy, ICauseScheduledAnarchy>();
             var schedule = new Schedule();
-            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory.Build();
+            var scheduler = Substitute.For<IScheduler>();
+            var schedulerFactory = Get.CustomBuilderFor.MockSchedulerFactory
+                .CreatesSpecifiedScheduler(scheduler)
+                .Build();
             var orchestrator = new ActionOrchestrator<ICauseAnarchy>(action, schedulerFactory);
+            orchestrator.AssociateSchedule(new Schedule());
             orchestrator.Start();
+            scheduler.Running.Returns(true);
 
             //Act
             Action sutCall = () => orchestrator.AssociateSchedule(schedule);
