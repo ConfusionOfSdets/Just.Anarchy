@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Just.Anarchy.Core;
-using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
+using Just.Anarchy.Test.Common.Builders;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -16,10 +16,8 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         public void MatchingOrchestrator_ValidNewSchedule(string anarchyType)
         {
             //arrange
-            var orchestrator = Substitute.For<IActionOrchestrator>();
-            var action = Substitute.For<ICauseAnarchy>();
-            action.Name.Returns("testAnarchyType");
-            orchestrator.AnarchyAction.Returns(action);
+            var orchestrator = Get.MotherFor.MockAnarchyActionOrchestrator
+                .OrchestratorWithScheduleNamed("testAnarchyType").Build();
             var sut = new AnarchyManagerNew(new [] { orchestrator });
 
             //act
@@ -37,10 +35,8 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         public void NoMatchingOrchestrator(string anarchyType)
         {
             //arrange
-            var orchestrator = Substitute.For<IActionOrchestrator>();
-            var action = Substitute.For<ICauseAnarchy>();
-            action.Name.Returns("testAnarchyType");
-            orchestrator.AnarchyAction.Returns(action);
+            var orchestrator = Get.MotherFor.MockAnarchyActionOrchestrator
+                    .OrchestratorWithScheduleNamed("testAnarchyType").Build();
             var sut = new AnarchyManagerNew(new [] { orchestrator });
 
             //act
@@ -58,14 +54,11 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         public void SelectsFirstMatchingOrchestrator(string firstActionName, string secondActionName, int firstCount, int secondCount)
         {
             //arrange
-            var orchestrator1 = Substitute.For<IActionOrchestrator>();
-            var orchestrator2 = Substitute.For<IActionOrchestrator>();
-            var firstAction = Substitute.For<ICauseAnarchy>();
-            firstAction.Name.Returns(firstActionName);
-            var secondAction = Substitute.For<ICauseAnarchy>();
-            secondAction.Name.Returns(secondActionName);
-            orchestrator1.AnarchyAction.Returns(firstAction);
-            orchestrator2.AnarchyAction.Returns(secondAction);
+            var orchestrator1 = Get.MotherFor.MockAnarchyActionOrchestrator
+                    .OrchestratorWithScheduleNamed(firstActionName).Build();
+            var orchestrator2 = Get.MotherFor.MockAnarchyActionOrchestrator
+                .OrchestratorWithScheduleNamed(secondActionName).Build();
+
             var sut = new AnarchyManagerNew(new [] { orchestrator1, orchestrator2 });
 
             //act

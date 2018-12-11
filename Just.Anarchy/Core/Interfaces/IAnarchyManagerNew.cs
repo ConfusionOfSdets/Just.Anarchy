@@ -86,6 +86,12 @@ namespace Just.Anarchy.Core.Interfaces
         void StartSchedule(string anarchyType);
 
         /// <summary>
+        /// Starts the schedules of all the registered anarchy action orchestrators.
+        /// </summary>
+        /// <exception cref="ActionStoppingException">this exception is triggered if an action orchestrator has already been asked to stop</exception>
+        void StartAllSchedules();
+
+        /// <summary>
         /// Stops any scheduled action or currently triggered actions within a given action orchestrator.
         /// NOTE: this can be called against any action orchestrator, as it will kill any in-process action execution (scheduled or not).
         /// </summary>

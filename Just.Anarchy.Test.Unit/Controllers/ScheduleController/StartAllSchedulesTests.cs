@@ -7,10 +7,8 @@ using NUnit.Framework;
 namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
 {
     [TestFixture]
-    public class StartScheduleTests : BaseControllerTests
+    public class StartAllSchedulesTests : BaseControllerTests
     {
-        const string anarchyType = "anarchyType";
-
         [Test]
         public void StartSchedule_CallsAnarchyManager()
         {
@@ -19,10 +17,10 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
             
             //Act
-            sut.StartSchedule(anarchyType);
+            sut.StartAllSchedules();
 
             //Assert
-            anarchyManager.Received(1).StartSchedule(anarchyType);
+            anarchyManager.Received(1).StartAllSchedules();
         }
 
         [Test]
@@ -33,10 +31,10 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
 
             //Act
-            var result = sut.StartSchedule(anarchyType);
+            var result = sut.StartAllSchedules();
 
             //Assert
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<AcceptedResult>();
         }
     }
 }

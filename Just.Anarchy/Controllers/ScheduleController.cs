@@ -60,6 +60,13 @@ namespace Just.Anarchy.Controllers
             return new OkResult();
         }
 
+        [HttpPut, Route(Routes.Schedule.StartAll)]
+        public IActionResult StartAllSchedules()
+        {
+            _anarchyManager.StartAllSchedules();
+            return new AcceptedResult();
+        }
+
         private string GetFullUrl(string path) => $"{(this.Request.IsHttps ? "https://" : "http://")}{this.Request.Host}{path}";
     }
 }
