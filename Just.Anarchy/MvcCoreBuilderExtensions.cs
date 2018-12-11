@@ -22,7 +22,7 @@ namespace Just.Anarchy
             return builder;
         }
 
-        private static IMvcBuilder AddAnarchyCore(this IMvcBuilder builder)
+        public static IMvcBuilder AddAnarchyCore(this IMvcBuilder builder)
         {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
@@ -47,27 +47,35 @@ namespace Just.Anarchy
             return builder;
         }
 
-        private static IMvcBuilder AddAnarchyDefaultActions(this IMvcBuilder builder)
+        public static IMvcBuilder AddAnarchyDefaultActions(this IMvcBuilder builder)
         {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
 
-            builder.Services.AddSingleton<DelayAnarchy>();
-            builder.Services.AddSingleton<CpuAnarchy>();
-            builder.Services.AddSingleton<MemoryAnarchy>();
-            builder.Services.AddSingleton<RandomErrorResponseAnarchy>();
-            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<DelayAnarchy>>();
-            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<CpuAnarchy>>();
-            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<MemoryAnarchy>>();
-            builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<RandomErrorResponseAnarchy>>();
+            builder.Services.AddAnarchyAction<DelayAnarchy>();
+            builder.Services.AddAnarchyAction<CpuAnarchy>();
+            builder.Services.AddAnarchyAction<MemoryAnarchy>();
+            builder.Services.AddAnarchyAction<RandomErrorResponseAnarchy>();
 
             return builder;
         }
 
         public static IApplicationBuilder UseAnarchy(this IApplicationBuilder builder)
         {
+            if (builder == null)
+                throw new ArgumentNullException(nameof(builder));
+
             builder.UseMiddleware<AnarchyMiddleware>();
             return builder;
+        }
+
+        public static void AddAnarchyAction<TAnarchyAction>(this IServiceCollection services) where TAnarchyAction : class, ICauseAnarchy
+        {
+            if (services == null)
+                throw new ArgumentNullException(nameof(services));
+
+            services.AddSingleton<TAnarchyAction>();
+            services.AddSingleton<IActionOrchestrator, ActionOrchestrator<TAnarchyAction>>();
         }
     }
 }
