@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Just.Anarchy.Actions;
 using Just.Anarchy.Core;
-using Just.Anarchy.Core.Enums;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions.Handlers;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Timer = Just.Anarchy.Core.Utils.Timer;
 
@@ -17,6 +12,17 @@ namespace Just.Anarchy
     public static class MvcCoreBuilderExtensions
     {
         public static IMvcBuilder AddAnarchy(this IMvcBuilder builder)
+        {
+            if (builder == null)
+                throw new ArgumentNullException(nameof(builder));
+
+            builder.AddAnarchyCore();
+            builder.AddAnarchyDefaultActions();
+
+            return builder;
+        }
+
+        private static IMvcBuilder AddAnarchyCore(this IMvcBuilder builder)
         {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
@@ -37,6 +43,15 @@ namespace Just.Anarchy
             builder.Services.AddSingleton<IExceptionHandler, ActionStoppingExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, InvalidActionPayloadExceptionHandler>();
             builder.Services.AddSingleton<ISchedulerFactory, SchedulerFactory>();
+
+            return builder;
+        }
+
+        private static IMvcBuilder AddAnarchyDefaultActions(this IMvcBuilder builder)
+        {
+            if (builder == null)
+                throw new ArgumentNullException(nameof(builder));
+
             builder.Services.AddSingleton<DelayAnarchy>();
             builder.Services.AddSingleton<CpuAnarchy>();
             builder.Services.AddSingleton<MemoryAnarchy>();
@@ -45,6 +60,7 @@ namespace Just.Anarchy
             builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<CpuAnarchy>>();
             builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<MemoryAnarchy>>();
             builder.Services.AddSingleton<IActionOrchestrator, ActionOrchestrator<RandomErrorResponseAnarchy>>();
+
             return builder;
         }
 
