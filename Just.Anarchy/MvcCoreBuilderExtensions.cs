@@ -31,17 +31,12 @@ namespace Just.Anarchy
             builder.Services.AddSingleton<IAnarchyManagerNew, AnarchyManagerNew>();
             builder.Services.AddSingleton<IHandleTime, Timer>();
             builder.Services.AddSingleton<IHandleAnarchyExceptions, ExceptionHandlerManager>();
-            builder.Services.AddSingleton<IExceptionHandler, AnarchyActionNotFoundExceptionHandler>();
-            builder.Services.AddSingleton<IExceptionHandler, ScheduleRunningExceptionHandler>();
-            builder.Services.AddSingleton<IExceptionHandler, ScheduleExistsExceptionHandler>();
-            builder.Services.AddSingleton<IExceptionHandler, ScheduleMissingExceptionHandler>();
-            builder.Services.AddSingleton<IExceptionHandler, UnschedulableActionExceptionHandler>();
-            builder.Services.AddSingleton<IExceptionHandler, MultipleResponseAlteringActionsEnabledExceptionHandler>();
-            builder.Services.AddSingleton<IExceptionHandler, SetActionTargetPatternRequestBodyRequiredExceptionHandler>();
-            builder.Services.AddSingleton<IExceptionHandler, InvalidTargetPatternExceptionHandler>();
-            builder.Services.AddSingleton<IExceptionHandler, EmptyTargetPatternExceptionHandler>();
-            builder.Services.AddSingleton<IExceptionHandler, ActionStoppingExceptionHandler>();
-            builder.Services.AddSingleton<IExceptionHandler, InvalidActionPayloadExceptionHandler>();
+            builder.Services.Scan(scan => 
+                scan.FromAssemblyOf<ExceptionHandlerManager>()
+                    .AddClasses(classes => classes.AssignableTo<IExceptionHandler>())
+                    .As<IExceptionHandler>()
+                    .WithSingletonLifetime());
+                
             builder.Services.AddSingleton<ISchedulerFactory, SchedulerFactory>();
 
             return builder;
