@@ -14,7 +14,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
         {
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
-            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
+            var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
             
             //Act
             sut.StartAllSchedules();
@@ -28,7 +28,7 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
         {
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
-            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
+            var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
 
             //Act
             var result = sut.StartAllSchedules();
