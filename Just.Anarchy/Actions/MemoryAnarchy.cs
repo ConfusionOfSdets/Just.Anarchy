@@ -10,9 +10,8 @@ namespace Just.Anarchy.Actions
 {
     public class MemoryAnarchy : ICauseScheduledAnarchy
     {
-        public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.Passive;
+        public CauseAnarchyType AnarchyType { get; } = CauseAnarchyType.Passive;
         public string Name => nameof(MemoryAnarchy);
-        public bool Active { get; set; } = false;
         public TimeSpan DefaultDuration { get; } = TimeSpan.FromMinutes(1);
 
         // TODO: AmountMb needs to be parameterized.

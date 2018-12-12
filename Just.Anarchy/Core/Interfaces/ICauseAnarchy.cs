@@ -7,10 +7,9 @@ namespace Just.Anarchy.Core.Interfaces
 {
     public interface ICauseAnarchy
     {
-        CauseAnarchyType AnarchyType { get; set; }
+        CauseAnarchyType AnarchyType { get; }
         string Name { get; }
-        bool Active { get; set; }
-
+        
         /// <summary>
         /// Execute one execution of the specified AnarchyAction acting upon a given HttpContext
         /// </summary>

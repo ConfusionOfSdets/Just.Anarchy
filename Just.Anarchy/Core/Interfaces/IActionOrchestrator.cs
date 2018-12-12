@@ -82,5 +82,12 @@ namespace Just.Anarchy.Core.Interfaces
         /// <param name="pattern">The url path regex pattern to match (.net compatible regex or null)</param>
         /// <exception cref="InvalidTargetPatternException">Thrown if the targetPattern is whitespace or an invalid regex.</exception>
         void ForTargetPattern(string pattern);
+
+        /// <summary>
+        /// Updates the action properties, this can set any properties specific to the action.
+        /// NOTE: the action itself defines how these are processed and updated (or rejected).
+        /// </summary>
+        /// <param name="updatedActionJson">a json string containing a representation of the updated properties</param>
+        void UpdateAction(string updatedActionJson);
     }
 }

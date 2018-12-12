@@ -26,7 +26,7 @@ namespace Just.Anarchy.Test.Integration.Middleware.WhenNonAnarchyRouteIsRequeste
         {
             _passiveMockOrchestrator = Get.MotherFor.MockAnarchyActionOrchestrator
                 .OrchestratorWithoutScheduleNamed("goingtodonothing")
-                .WithActionCauseAnarchyType(CauseAnarchyType.Passive)
+                .WithAction(Get.CustomBuilderFor.MockAnarchyAction.WithCauseAnarchyType(CauseAnarchyType.Passive).Build())
                 .ThatCanHandleRequestWith(async (context, next) =>
                 {
                     _passiveCalledAt = DateTime.Now;
@@ -36,7 +36,7 @@ namespace Just.Anarchy.Test.Integration.Middleware.WhenNonAnarchyRouteIsRequeste
 
             _alterResponseMockOrchestrator = Get.MotherFor.MockAnarchyActionOrchestrator
                 .OrchestratorWithoutScheduleNamed("teapot")
-                .WithActionCauseAnarchyType(CauseAnarchyType.AlterResponse)
+                .WithAction(Get.CustomBuilderFor.MockAnarchyAction.WithCauseAnarchyType(CauseAnarchyType.AlterResponse).Build())
                 .ThatCanHandleRequestWith(async (context, next) =>
                 {
                     _alterResponseCalledAt = DateTime.Now;

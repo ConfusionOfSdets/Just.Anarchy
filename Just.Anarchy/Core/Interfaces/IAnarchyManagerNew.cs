@@ -64,5 +64,14 @@ namespace Just.Anarchy.Core.Interfaces
         /// <exception cref="UnschedulableActionException">This exception is thrown if the anarchy type does not implement ICauseScheduledAnarchy.</exception>
         /// <exception cref="ScheduleRunningException">This exception is thrown if the action orchestrator containing the anarchy type is already running a schedule (and so cannot be triggered directly).</exception>
         void TriggerAction(string anarchyType, TimeSpan? duration);
+
+        /// <summary>
+        /// Updates an anarchy action, allowing you to set custom parameters specific to a given action,
+        /// this assesses the type based on anarchyType and asks the action to process the provided json payload.
+        /// </summary>
+        /// <param name="anarchyType">The anarchy type to process</param>
+        /// <param name="updatedPayload">Json payload containing the updated properties of the anarchy action
+        /// (note it is up to the anarchy action to define how this is processed!</param>
+        void UpdateAction(string anarchyType, string updatedPayload);
     }
 }

@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Just.Anarchy.Actions;
 using Just.Anarchy.Core;
+using Just.Anarchy.Core.Enums;
 using Just.Anarchy.Core.Interfaces;
-using Just.Anarchy.Core.Utils;
 using Just.Anarchy.Exceptions.Handlers;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Timer = Just.Anarchy.Core.Utils.Timer;
 
 namespace Just.Anarchy
 {
@@ -29,6 +34,7 @@ namespace Just.Anarchy
             builder.Services.AddSingleton<IExceptionHandler, InvalidTargetPatternExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, EmptyTargetPatternExceptionHandler>();
             builder.Services.AddSingleton<IExceptionHandler, ActionStoppingExceptionHandler>();
+            builder.Services.AddSingleton<IExceptionHandler, InvalidActionPayloadExceptionHandler>();
             builder.Services.AddSingleton<ISchedulerFactory, SchedulerFactory>();
             builder.Services.AddSingleton<DelayAnarchy>();
             builder.Services.AddSingleton<CpuAnarchy>();

@@ -9,12 +9,8 @@ namespace Just.Anarchy.Actions
 {
     public class DelayAnarchy : ICauseAnarchy
     {
-        public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.Passive;
+        public CauseAnarchyType AnarchyType { get; } = CauseAnarchyType.Passive;
         public string Name => nameof(DelayAnarchy);
-        public bool Active { get; set; } = false;
-
-        public int StatusCode { get; } = 0;
-        public string Body { get; } = null;
 
         private TimeSpan? _delayBefore;
         private TimeSpan? _delayAfter;

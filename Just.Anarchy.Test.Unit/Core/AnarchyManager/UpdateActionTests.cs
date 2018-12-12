@@ -9,24 +9,26 @@ using NUnit.Framework;
 namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
 {
     [TestFixture]
-    public class AssignTargetPatternTests
+    public class UpdateActionTests
     {
+        private const string FakeUpdatePayload = "afakepayload";
+
         [Test]
         [TestCase("TESTAnarchyType")]
         [TestCase("testAnarchyType")]
         public void MatchingOrchestrator(string anarchyType)
         {
             //arrange
-            var orchestrator = Get.MotherFor
-                .MockAnarchyActionOrchestrator
+            var orchestrator = Get.MotherFor.MockAnarchyActionOrchestrator
                 .OrchestratorWithScheduleNamed("testAnarchyType").Build();
             var sut = new AnarchyManagerNew(new [] { orchestrator });
 
+
             //act
-            sut.AssignTargetPattern(anarchyType, ".*");
+            sut.UpdateAction(anarchyType, FakeUpdatePayload);
 
             //assert
-            orchestrator.Received(1).ForTargetPattern(".*");
+            orchestrator.Received(1).UpdateAction(FakeUpdatePayload);
         }
 
         [Test]
@@ -37,17 +39,19 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         public void NoMatchingOrchestrator(string anarchyType)
         {
             //arrange
-            var orchestrator = Get.MotherFor
-                .MockAnarchyActionOrchestrator
-                .OrchestratorWithScheduleNamed("testAnarchyType").Build();
+            var schedule = new Schedule();
+            var orchestrator = Substitute.For<IActionOrchestrator>();
+            var action = Substitute.For<ICauseAnarchy>();
+            action.Name.Returns("testAnarchyType");
+            orchestrator.AnarchyAction.Returns(action);
             var sut = new AnarchyManagerNew(new [] { orchestrator });
 
             //act
-            var exception = Assert.Catch(() => sut.AssignTargetPattern(anarchyType, ".*"));
+            var exception = Assert.Catch(() => sut.UpdateAction(anarchyType, FakeUpdatePayload));
 
             //assert
             exception.Should().BeOfType<AnarchyActionNotFoundException>();
-            orchestrator.Received(0).AssociateSchedule(Arg.Any<Schedule>());
+            orchestrator.Received(0).UpdateAction(Arg.Any<string>());
         }
 
         [Test]
@@ -57,16 +61,20 @@ namespace Just.Anarchy.Test.Unit.Core.AnarchyManager
         public void SelectsFirstMatchingOrchestrator(string firstActionName, string secondActionName, int firstCount, int secondCount)
         {
             //arrange
-            var orchestrator1 = Get.MotherFor.MockAnarchyActionOrchestrator.OrchestratorWithScheduleNamed(firstActionName).Build();
-            var orchestrator2 = Get.MotherFor.MockAnarchyActionOrchestrator.OrchestratorWithScheduleNamed(secondActionName).Build();
+            var orchestrator1 = Get.MotherFor
+                .MockAnarchyActionOrchestrator
+                .OrchestratorWithScheduleNamed(firstActionName).Build();
+            var orchestrator2 = Get.MotherFor
+                .MockAnarchyActionOrchestrator
+                .OrchestratorWithScheduleNamed(secondActionName).Build();
             var sut = new AnarchyManagerNew(new [] { orchestrator1, orchestrator2 });
 
             //act
-            sut.AssignTargetPattern("firstActionName", ".*");
+            sut.UpdateAction("firstActionName", FakeUpdatePayload);
 
             //assert
-            orchestrator1.Received(firstCount).ForTargetPattern(".*");
-            orchestrator2.Received(secondCount).ForTargetPattern(".*");
+            orchestrator1.Received(firstCount).UpdateAction(FakeUpdatePayload);
+            orchestrator2.Received(secondCount).UpdateAction(FakeUpdatePayload);
         }
     }
 }

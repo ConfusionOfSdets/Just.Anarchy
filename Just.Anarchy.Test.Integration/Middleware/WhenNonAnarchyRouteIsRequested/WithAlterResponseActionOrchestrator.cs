@@ -22,7 +22,7 @@ namespace Just.Anarchy.Test.Integration.Middleware.WhenNonAnarchyRouteIsRequeste
         {
             _mockOrchestrator = Get.MotherFor.MockAnarchyActionOrchestrator
                 .OrchestratorWithoutScheduleNamed("teapot")
-                .WithActionCauseAnarchyType(CauseAnarchyType.AlterResponse)
+                .WithAction(Get.CustomBuilderFor.MockAnarchyAction.WithCauseAnarchyType(CauseAnarchyType.AlterResponse).Build())
                 .ThatCanHandleRequestWith(async (context, next) =>
                 {
                     context.Response.StatusCode = StatusCodes.Status418ImATeapot;

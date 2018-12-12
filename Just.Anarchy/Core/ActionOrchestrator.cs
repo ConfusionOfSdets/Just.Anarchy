@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using Just.Anarchy.Extensions;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
-namespace Just.Anarchy.Actions
+namespace Just.Anarchy.Core
 {
     public class ActionOrchestrator<TAnarchyAction> : IActionOrchestrator where TAnarchyAction : ICauseAnarchy
     {
         
-        public ICauseAnarchy AnarchyAction { get; }
+        public ICauseAnarchy AnarchyAction { get; private set;  }
         public bool IsActive { get; private set; }
         public string TargetPattern => _matchTargetPattern.ToString();
         public Schedule ExecutionSchedule { get; private set; }
@@ -131,6 +131,26 @@ namespace Just.Anarchy.Actions
                     throw new InvalidTargetPatternException(pattern, e);
                 }
             }    
+        }
+
+        public void UpdateAction(string updatedActionJson)
+        {
+            try
+            {
+                JsonConvert.PopulateObject(
+                    updatedActionJson, 
+                    this.AnarchyAction,
+                    new JsonSerializerSettings {MissingMemberHandling = MissingMemberHandling.Error}
+                );
+            }
+            catch (JsonSerializationException e)
+            {
+                throw new InvalidActionPayloadException(this.AnarchyAction.GetType(), e);
+            }
+            catch (JsonReaderException e)
+            {
+                throw new InvalidActionPayloadException(this.AnarchyAction.GetType(), e);
+            }
         }
 
         private void StartSchedule()

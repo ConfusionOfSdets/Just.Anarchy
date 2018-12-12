@@ -61,7 +61,7 @@ namespace Just.Anarchy.Test.Unit.Core.Utils
             sw.Stop();
 
             //Assert
-            sw.Elapsed.Should().BeCloseTo(TimeSpan.FromMilliseconds(500), 50);
+            sw.Elapsed.Should().BeCloseTo(TimeSpan.FromMilliseconds(500), 100);
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace Just.Anarchy.Test.Unit.Core.Utils
             sw.Stop();
 
             //Assert
-            sw.Elapsed.Should().BeCloseTo(TimeSpan.FromMilliseconds(150));
+            sw.Elapsed.Should().BeCloseTo(TimeSpan.FromMilliseconds(150), 50);
         }
     }
 }

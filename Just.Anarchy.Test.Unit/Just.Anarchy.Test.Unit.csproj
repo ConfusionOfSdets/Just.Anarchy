@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Just.Anarchy\Just.Anarchy.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Actions\" />
+  </ItemGroup>
+
 </Project>

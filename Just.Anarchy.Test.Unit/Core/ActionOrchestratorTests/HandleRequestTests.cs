@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Just.Anarchy.Test.Unit.Actions.ActionOrchestratorTests
+namespace Just.Anarchy.Test.Unit.Core.ActionOrchestratorTests
 {
     [TestFixture]
     public class HandleRequestTests

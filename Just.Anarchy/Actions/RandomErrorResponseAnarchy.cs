@@ -12,41 +12,54 @@ namespace Just.Anarchy.Actions
 {
     public class RandomErrorResponseAnarchy : ICauseAnarchy
     {
-        public CauseAnarchyType AnarchyType { get; set; } = CauseAnarchyType.AlterResponse;
+        public CauseAnarchyType AnarchyType { get; } = CauseAnarchyType.AlterResponse;
         public string Name => nameof(RandomErrorResponseAnarchy);
-        public bool Active { get; set; } = false;
 
-        public int StatusCode { get; set; }
-
+        public int? StatusCode { get; set; }
         public string Body { get; set; }
+
+        private static readonly Random Random = new Random();
+        private static readonly object SyncLock = new object();
 
         public async Task HandleRequestAsync(HttpContext context, RequestDelegate next, CancellationToken cancellationToken)
         {
-            var random = new Random();
-            StatusCode = random.Next(400, 600);
-            Body = JsonConvert.SerializeObject(RandomObject(cancellationToken));
-            await context.Response.WriteAsync(Body, cancellationToken);
+            context.Response.StatusCode = StatusCode ?? GetRandomStatusCode();
+            var bodyToWrite = string.IsNullOrEmpty(Body) ? JsonConvert.SerializeObject(RandomObject(cancellationToken)) : Body;
+
+            await context.Response.WriteAsync(bodyToWrite, cancellationToken);
         }
+
+        private static int GetRandomStatusCode() => RandomNumber(400, 600);
 
         private static Dictionary<string,object> RandomObject(CancellationToken cancellationToken)
         {
-            var random = new Random();
             var obj = new Dictionary<string, object>();
             Parallel.ForEach(Enumerable.Range(0,1000)
                 .AsParallel()
                 .WithCancellation(cancellationToken), 
                 x => {
-                    obj.Add(RandomString(random.Next(1, 1000)), RandomString(random.Next(1, 1000)));
+                    obj.Add(RandomString(RandomNumber(1, 1000)), RandomString(RandomNumber(1, 1000)));
                 }
                 );
             return obj;
         }
+
         private static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            var random = new Random();
+            
             return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
+              .Select(s => chars[RandomNumber(chars.Length)]).ToArray());
+        }
+
+        private static int RandomNumber(int to = int.MaxValue) => RandomNumber(0, to);
+
+        private static int RandomNumber(int from,  int to)
+        {
+            lock (SyncLock)
+            {
+                return Random.Next(from, to);
+            }
         }
     }
 }
