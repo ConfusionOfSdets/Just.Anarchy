@@ -81,6 +81,33 @@ namespace Just.Anarchy.Core
             return true;
         }
 
+        public void StartSchedule(string anarchyType) => GetOrchestratorContainingAction(anarchyType).Start();
+
+        public void StartAllSchedules()
+        {
+            Parallel.ForEach(
+                _actionOrchestrators.Where(a => a.AnarchyAction is ICauseScheduledAnarchy),
+                StartIgnoringScheduleErrors
+            );
+        }
+
+        public void StopAction(string anarchyType) => GetOrchestratorContainingAction(anarchyType).Stop();
+
+        public void StopAllActions() => Parallel.ForEach(_actionOrchestrators, o => o.Stop());
+
+        private void StartIgnoringScheduleErrors(IActionOrchestrator orchestrator)
+        {
+            try
+            {
+                orchestrator.Start();
+            }
+            catch (ScheduleMissingException)
+            {
+                // Deliberately suppress this
+                //TODO: Should we provide feedback in this instance or error here?
+            }
+        }
+
         private IActionOrchestrator GetOrchestratorContainingAction(string anarchyType)
         {
             var actionOrchestrator = _actionOrchestrators.FirstOrDefault(o => o.AnarchyAction.Name.ToLower().Equals(anarchyType?.ToLower()));
