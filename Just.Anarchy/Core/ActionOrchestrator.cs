@@ -15,7 +15,7 @@ namespace Just.Anarchy.Core
     public class ActionOrchestrator<TAnarchyAction> : IActionOrchestrator where TAnarchyAction : ICauseAnarchy
     {
         
-        public ICauseAnarchy AnarchyAction { get; }
+        public ICauseAnarchy AnarchyAction { get; private set;  }
         public bool IsActive { get; private set; }
         public string TargetPattern => _matchTargetPattern.ToString();
         public Schedule ExecutionSchedule { get; private set; }
