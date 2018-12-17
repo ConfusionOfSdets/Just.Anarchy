@@ -3,6 +3,7 @@ using Just.Anarchy.Core;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Test.Common.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -21,7 +22,8 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             anarchyManager
                 .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), Arg.Any<bool>())
                 .Returns(true);
-            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.ScheduleController>>();
+            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager, logger));
 
             var schedule = It.IsAny<Schedule>();
             
@@ -40,7 +42,8 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             anarchyManager
                 .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), true)
                 .Returns(true);
-            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.ScheduleController>>();
+            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager, logger));
 
             var schedule = It.IsAny<Schedule>();
 
@@ -59,7 +62,8 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             anarchyManager
                 .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), true)
                 .Returns(true);
-            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.ScheduleController>>();
+            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager, logger));
 
             var schedule = It.IsAny<Schedule>();
 
@@ -78,7 +82,8 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             anarchyManager
                 .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), true)
                 .Returns(false);
-            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.ScheduleController>>();
+            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager, logger));
             
             var schedule = It.IsAny<Schedule>();
 
@@ -97,7 +102,8 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             anarchyManager
                 .AssignScheduleToActionOrchestrator(Arg.Any<string>(), Arg.Any<Schedule>(), true)
                 .Returns(false);
-            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager));
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.ScheduleController>>();
+            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.ScheduleController(anarchyManager, logger));
             var schedule = It.IsAny<Schedule>();
 
             //Act

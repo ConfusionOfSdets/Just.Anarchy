@@ -4,6 +4,7 @@ using Just.Anarchy.Core.Dtos;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Responses;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -20,7 +21,8 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             var schedules = new List<NamedScheduleDto>();
 
             anarchyManager.GetAllSchedulesFromOrchestrators().Returns(schedules);
-            var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.ScheduleController>>();
+            var sut = new Anarchy.Controllers.ScheduleController(anarchyManager, logger);
             
             //Act
             var result = sut.GetAllSchedules();

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Just.Anarchy.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -19,7 +20,8 @@ namespace Just.Anarchy.Test.Unit.Controllers.AnarchyController
         public async Task UpdateAction_ReturnsOkResult()
         {
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
-            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.AnarchyController(anarchyManager));
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.AnarchyController>>();
+            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.AnarchyController(anarchyManager, logger));
             sut.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(updatePayload));
 
             //Act
@@ -34,7 +36,8 @@ namespace Just.Anarchy.Test.Unit.Controllers.AnarchyController
         {
             //arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
-            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.AnarchyController(anarchyManager));
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.AnarchyController>>();
+            var sut = ControllerWithContextBuilder(() => new Anarchy.Controllers.AnarchyController(anarchyManager, logger));
             sut.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(updatePayload));
 
             //Act

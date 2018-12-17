@@ -4,6 +4,7 @@ using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Test.Common.Builders;
 using Just.Anarchy.Test.Common.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -21,7 +22,8 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
             var schedule = It.IsAny<Schedule>();
             anarchyManager.GetScheduleFromActionOrchestrator(Arg.Any<string>()).Returns(schedule);
-            var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.ScheduleController>>();
+            var sut = new Anarchy.Controllers.ScheduleController(anarchyManager, logger);
             
             //Act
             var result = sut.GetSchedule(AnarchyType);
@@ -37,7 +39,8 @@ namespace Just.Anarchy.Test.Unit.Controllers.ScheduleController
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
             anarchyManager.GetScheduleFromActionOrchestrator(Arg.Any<string>()).Returns((Schedule)null);
-            var sut = new Anarchy.Controllers.ScheduleController(anarchyManager);
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.ScheduleController>>();
+            var sut = new Anarchy.Controllers.ScheduleController(anarchyManager, logger);
 
             //Act
             var result = sut.GetSchedule(AnarchyType);
