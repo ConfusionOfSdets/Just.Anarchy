@@ -9,7 +9,7 @@ namespace Just.Anarchy.Exceptions.Handlers
 {
     public class ExceptionHandlerManager : IHandleAnarchyExceptions
     {
-        private List<IExceptionHandler> _handlers;
+        private readonly List<IExceptionHandler> _handlers;
 
         public ExceptionHandlerManager(IEnumerable<IExceptionHandler> handlers)
         {
@@ -29,6 +29,7 @@ namespace Just.Anarchy.Exceptions.Handlers
                 throw exception;
             }
             await handler.HandleExceptionAsync(response, exception);
+            handler.LogException(exception);
         }
     }
 }

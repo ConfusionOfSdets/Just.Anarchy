@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 namespace Just.Anarchy.Test.Common.Fakes
 {
     /// <summary>
-    /// Specifically used for testing - this is a real implementation but with no functionality - used to testing UpdateAction.
+    /// Specifically used for testing - this is a real implementation but with no functionality - used to test UpdateAction.
     /// </summary>
     public class FakeAnarchyAction : ICauseAnarchy
     {

@@ -11,7 +11,7 @@ namespace Just.Anarchy.Exceptions
         }
 
         public AnarchyActionNotFoundException(string missingActionType) :
-            base("The specified anarchy action does not exist")
+            base("The specified anarchy action does not exist.")
         {
             this.Data.Add("MissingAnarchyAction", missingActionType);
         }
