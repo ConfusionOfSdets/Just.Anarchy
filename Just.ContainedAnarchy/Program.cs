@@ -15,8 +15,11 @@ namespace Just.ContainedAnarchy
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureLogging(logging =>
                 {
-                    logging.ClearProviders();
-                    logging.AddConsole();
+                    logging
+                        .ClearProviders()
+                        .AddFilter("Microsoft", LogLevel.Warning)
+                        .AddFilter("Just.Anarchy", LogLevel.Debug)
+                        .AddConsole();
                 })
                 .UseStartup<Startup>();
     }
