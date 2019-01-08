@@ -1,4 +1,5 @@
-﻿using Just.Anarchy.Requests;
+﻿using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Requests;
 using Microsoft.AspNetCore.Http;
 
 namespace Just.Anarchy.Exceptions.Handlers
@@ -6,10 +7,9 @@ namespace Just.Anarchy.Exceptions.Handlers
     public class SetActionTargetPatternRequestBodyRequiredExceptionHandler : 
         BaseExceptionHandler<RequestBodyRequiredException<EnableOnRequestHandlingRequest>>
     {
-        private const string RequestType = "set-on-request-handling";
-
-        public SetActionTargetPatternRequestBodyRequiredExceptionHandler() : 
-            base($"{RequestType}-request-body-empty", StatusCodes.Status400BadRequest)
+        public SetActionTargetPatternRequestBodyRequiredExceptionHandler(
+            ILogAdapter<RequestBodyRequiredException<EnableOnRequestHandlingRequest>> logger) : 
+            base(logger, "set-on-request-handling-request-body-empty", StatusCodes.Status400BadRequest)
         { }
     }
 }

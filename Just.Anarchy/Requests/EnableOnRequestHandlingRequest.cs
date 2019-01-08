@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Just.Anarchy.Requests
+﻿namespace Just.Anarchy.Requests
 {
     public class EnableOnRequestHandlingRequest
     {

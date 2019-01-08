@@ -6,6 +6,7 @@ using Just.Anarchy.Actions;
 using Just.Anarchy.Core;
 using Just.Anarchy.Core.Enums;
 using Just.Anarchy.Core.Interfaces;
+using Just.Anarchy.Core.Utils;
 using Just.Anarchy.Exceptions.Handlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +34,7 @@ namespace Just.Anarchy
                 throw new ArgumentNullException(nameof(builder));
 
             builder.AddApplicationPart(typeof(MvcCoreBuilderExtensions).Assembly);
+            builder.Services.AddSingleton(typeof(ILogAdapter<>), typeof(BasicLogAdapter<>));
             builder.Services.AddSingleton<IAnarchyManagerNew, AnarchyManagerNew>();
             builder.Services.AddSingleton<IHandleTime, Timer>();
             builder.Services.AddSingleton<IHandleAnarchyExceptions, ExceptionHandlerManager>();

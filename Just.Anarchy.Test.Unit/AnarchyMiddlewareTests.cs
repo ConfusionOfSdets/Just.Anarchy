@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Test.Common.Builders;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
@@ -20,7 +21,8 @@ namespace Just.Anarchy.Test.Unit
             var exceptionHandler = Substitute.For<IHandleAnarchyExceptions>();
             var next = Substitute.For<RequestDelegate>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/foo").Build();
-            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler);
+            var logger = Substitute.For<ILogger<AnarchyMiddleware>>();
+            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler, logger);
 
             // Act
             await sut.Invoke(context);
@@ -37,7 +39,8 @@ namespace Just.Anarchy.Test.Unit
             var exceptionHandler = Substitute.For<IHandleAnarchyExceptions>();
             var next = Substitute.For<RequestDelegate>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/anarchy/foo").Build();
-            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler);
+            var logger = Substitute.For<ILogger<AnarchyMiddleware>>();
+            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler, logger);
 
             // Act
             await sut.Invoke(context);
@@ -57,7 +60,8 @@ namespace Just.Anarchy.Test.Unit
             var exceptionHandler = Substitute.For<IHandleAnarchyExceptions>();
             var next = Substitute.For<RequestDelegate>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/foo").Build();
-            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler);
+            var logger = Substitute.For<ILogger<AnarchyMiddleware>>();
+            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler, logger);
 
             // Act
             await sut.Invoke(context);
@@ -77,7 +81,8 @@ namespace Just.Anarchy.Test.Unit
             var exceptionHandler = Substitute.For<IHandleAnarchyExceptions>();
             var next = Substitute.For<RequestDelegate>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/foo").Build();
-            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler);
+            var logger = Substitute.For<ILogger<AnarchyMiddleware>>();
+            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler, logger);
 
             // Act
             await sut.Invoke(context);
@@ -98,7 +103,8 @@ namespace Just.Anarchy.Test.Unit
             var exceptionHandler = Substitute.For<IHandleAnarchyExceptions>();
             var next = Substitute.For<RequestDelegate>();
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/bob").Build();
-            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler);
+            var logger = Substitute.For<ILogger<AnarchyMiddleware>>();
+            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler, logger);
 
             // Act
             await sut.Invoke(context);
@@ -117,7 +123,8 @@ namespace Just.Anarchy.Test.Unit
             var next = Substitute.For<RequestDelegate>();
             next.Invoke(Arg.Any<HttpContext>()).Throws(testException);
             var context = Get.CustomBuilderFor.MockHttpContext.WithPath("/anarchy/bob").Build();
-            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler);
+            var logger = Substitute.For<ILogger<AnarchyMiddleware>>();
+            var sut = new AnarchyMiddleware(next, anarchyManager, exceptionHandler, logger);
 
             // Act
             await sut.Invoke(context);

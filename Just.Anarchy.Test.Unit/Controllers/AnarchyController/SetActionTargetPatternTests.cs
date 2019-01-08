@@ -2,6 +2,7 @@
 using Just.Anarchy.Core.Interfaces;
 using Just.Anarchy.Exceptions;
 using Just.Anarchy.Requests;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -11,18 +12,19 @@ namespace Just.Anarchy.Test.Unit.Controllers.AnarchyController
     public class SetActionTargetPatternTests
     {
         private const string anarchyType = "aFakeAnarchyType";
-        
 
         [Test]
         public void SetActionTargetPatternTests_PassesTargetPatternToManager()
         {
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
-            var sut = new Anarchy.Controllers.AnarchyController(anarchyManager);
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.AnarchyController>>();
+            var sut = new Anarchy.Controllers.AnarchyController(anarchyManager, logger);
             var request = new EnableOnRequestHandlingRequest
             {
                 TargetPattern = "aTargetPattern"
             };
+
             //Act
             sut.SetActionTargetPattern(anarchyType, request);
 
@@ -35,7 +37,9 @@ namespace Just.Anarchy.Test.Unit.Controllers.AnarchyController
         {
             //Arrange
             var anarchyManager = Substitute.For<IAnarchyManagerNew>();
-            var sut = new Anarchy.Controllers.AnarchyController(anarchyManager);
+            var logger = Substitute.For<ILogger<Anarchy.Controllers.AnarchyController>>();
+            var sut = new Anarchy.Controllers.AnarchyController(anarchyManager, logger);
+
             //Act
             var exception = Assert.Catch(() => sut.SetActionTargetPattern(anarchyType, null));
 
