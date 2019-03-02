@@ -16,7 +16,6 @@ namespace Just.Anarchy.Test.Integration.Controllers.AnarchyController
     {
         private HttpClient _client;
         private HttpResponseMessage _response;
-        private string _payload;
         private IActionOrchestrator _mockOrchestrator;
         
         public override void Given()
