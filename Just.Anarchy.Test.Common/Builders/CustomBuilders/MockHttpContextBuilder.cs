@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using NSubstitute;
 
 namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
@@ -18,6 +21,11 @@ namespace Just.Anarchy.Test.Common.Builders.CustomBuilders
             var request = Substitute.For<HttpRequest>();
                 request.Path.Returns(new PathString());
             var response = Substitute.For<HttpResponse>();
+            var responseBody = Substitute.For<Stream>();
+            responseBody
+                .WriteAsync(Arg.Any<byte[]>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+                .Returns(Task.CompletedTask);
+            response.Body.Returns(responseBody);
             request.Path.Returns(new PathString(_requestPath));
             context.Request.Returns(request);
             context.Response.Returns(response);
