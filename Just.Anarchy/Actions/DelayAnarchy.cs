@@ -12,27 +12,32 @@ namespace Just.Anarchy.Actions
         public CauseAnarchyType AnarchyType { get; } = CauseAnarchyType.Passive;
         public string Name => nameof(DelayAnarchy);
 
-        private TimeSpan? _delayBefore;
-        private TimeSpan? _delayAfter;
-
-        public DelayAnarchy()
-        {
-            _delayBefore = TimeSpan.FromSeconds(5);
-            _delayAfter = TimeSpan.FromSeconds(5);
-        }
+        public TimeSpan? DelayBefore { get; set; } = TimeSpan.FromSeconds(5);
+        public TimeSpan? DelayAfter { get; set; } = TimeSpan.FromSeconds(5);
 
         public async Task HandleRequestAsync(HttpContext context, RequestDelegate next, CancellationToken cancellationToken)
         {
-            if (_delayBefore.HasValue)
+            try
             {
-                await Task.Delay(_delayBefore.Value, cancellationToken);
-            }
-            
-            next(context).Wait(cancellationToken);
+                if (DelayBefore.HasValue)
+                {
+                    await Task.Delay(DelayBefore.Value, cancellationToken);
+                }
 
-            if (_delayAfter.HasValue)
+                next(context).Wait(cancellationToken);
+
+                if (DelayAfter.HasValue)
+                {
+                    await Task.Delay(DelayAfter.Value, cancellationToken);
+                }
+            }
+            catch (TaskCanceledException)
             {
-                await Task.Delay(_delayAfter.Value, cancellationToken);
+                // Deliberately catch this as this is expected
+            }
+            catch (OperationCanceledException)
+            {
+                // Deliberately catch this as this is expected
             }
         }
     }
